@@ -9,9 +9,15 @@
     <H1>Welcome to the Picker UI</H1>
     <form method="POST">
         <p>Name: </p><input type="text" name="picker_name" />
-        <p>Batch:</p><input type="text" name="master_batch"/>
+        <p>Master Batch:</p><input type="text" name="master_batch"/>
         <input type="submit" value="Submit" />
     </form>
+    <div>
+        {% if status == "OK" %}
+            <p> Entry Added!</p>
+        {% endif %}
 
+
+    </div>
 </body>
 </html>

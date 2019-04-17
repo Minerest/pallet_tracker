@@ -9,6 +9,26 @@
 
     <H1>See who has which batches</H1>
 
+    <form method="POST">
+        <select name="picker">
+            <option value="Eric">Eric</option>
+            <option value="John">John</option>
+        </select>
+        <input type="submit">
+    </form>
+
+    {% if items %}
+    <table>
+        <th>Name</th>
+        <th>Batch</th>
+        {% for item in items %}
+        <tr>
+            <td>{{ item["name"] }}</td>
+            <td>{{ item["batch"] }}</td>
+        </tr>
+        {% endfor %}
+    {% endif %}
+    </table>
 
 </body>
 </html>

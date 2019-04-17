@@ -25,15 +25,19 @@ class SqlLitedb:
         self.metadata = metadata
         self.base = Base
         self.engine = engine
-        session = sessionmaker()
-        session.configure(bind=self.engine)
-        self.session = session()
+
+    def get_session(self):
+        Session = sessionmaker()
+        Session.configure(bind=self.engine)
+        session = Session()
+        return session
+
 
 
 class Picker(Base):
     __tablename__ = "Picker"
     id = Column(Integer, autoincrement=True, primary_key=True)
-    name = Column(String)
+    name = Column(String, unique=True)
 
 
 class MasterBatch(Base):
@@ -47,3 +51,4 @@ class Batch(Base):
     id = Column(Integer, autoincrement=False, primary_key=True)
     MasterBatch = Column(Integer, ForeignKey(MasterBatch.id))
 
+Base.metadata.create_all(bind=engine)
