@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Integer, Date, Table, ForeignKey
+from sqlalchemy import Column, String, Integer, Date, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import MetaData, create_engine
 from sqlalchemy.orm import sessionmaker
@@ -51,4 +51,11 @@ class Batch(Base):
     id = Column(Integer, autoincrement=False, primary_key=True)
     MasterBatch = Column(Integer, ForeignKey(MasterBatch.id))
 
-Base.metadata.create_all(bind=engine)
+
+class DropStation(Base):
+    __tablename__ = "DropStation"
+    id = Column(Integer, autoincrement=True, primary_key=True)
+    picker = Column(String)
+    pickerid = Column(Integer, ForeignKey(Picker.id))
+    date = Column(Date)
+    station = Column(String)

@@ -63,7 +63,6 @@ def get_data():
     else:
         picker_entry = Session.query(modals.Picker).filter(modals.Picker.name == picker_name).one()
 
-
     master_batch_entry = Session.query(modals.MasterBatch).filter(modals.MasterBatch.id == master_batch).one()
 
     master_batch_entry.pickerid = picker_entry.id
@@ -82,13 +81,15 @@ def get_active_pickers():
 def see_the_batches():
     picker = request.form["picker"]
     Session = db.get_session()
-
-    picker_entry = Session.query(modals.Picker).filter(modals.Picker.name == picker).one()
-
-    entries = Session.query(modals.Picker, modals.Batch, modals.MasterBatch)\
-        .filter(modals.Picker.name == picker)\
+    if picker == "All":
+        entries = Session.query(modals.Picker, modals.Batch, modals.MasterBatch)\
         .filter(modals.MasterBatch.pickerid == modals.Picker.id)\
         .filter(modals.Batch.MasterBatch == modals.MasterBatch.id)
+    else:
+        entries = Session.query(modals.Picker, modals.Batch, modals.MasterBatch)\
+            .filter(modals.Picker.name == picker)\
+            .filter(modals.MasterBatch.pickerid == modals.Picker.id)\
+            .filter(modals.Batch.MasterBatch == modals.MasterBatch.id)
 
     data_arr = []
 
@@ -97,8 +98,9 @@ def see_the_batches():
         item["name"] = picker_entry.name
         item["batch"] = batch.id
         data_arr.append(item)
-
+    Session.commit()
+    Session.close()
     return render_template("batch_viewer.html", items=data_arr)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0", port=80)

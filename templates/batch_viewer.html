@@ -7,14 +7,15 @@
 <body>
 
 
-    <H1>See who has which batches</H1>
+    <H1>Batch Viewer</H1>
 
     <form method="POST">
         <select name="picker">
+            <option value="All">All Pickers</option>
             <option value="Eric">Eric</option>
             <option value="John">John</option>
         </select>
-        <input type="submit">
+        <input type="submit" value="Do the lookup">
     </form>
 
     {% if items %}
