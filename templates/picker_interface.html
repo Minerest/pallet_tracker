@@ -7,17 +7,18 @@
 <body>
 
     <H1>Welcome to the Picker UI</H1>
+    <a href="/batch-viewer">BATCH VIEWER</a>
+    <a href="/picker-ui">PICKER UI</a>
+    <a href="/manager-ui">MANAGER UI</a>
     <form method="POST">
-        <p>Name: </p><input type="text" name="picker_name" />
-        <p>Master Batch:</p><input type="text" name="master_batch"/>
+        <p>Name: </p><input type="text" name="picker_name" placeholder="PICKER NAME" />
+        <p>Master Batch:</p><input type="text" name="master_batch" placeholder="MASTER BATCH"/><br /><br />
         <input type="submit" value="Submit" />
     </form>
     <div>
         {% if status == "OK" %}
             <p> Entry Added!</p>
         {% endif %}
-
-
     </div>
 </body>
 </html>

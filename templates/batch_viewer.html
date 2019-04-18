@@ -8,12 +8,15 @@
 
 
     <H1>Batch Viewer</H1>
-
+    <a href="/batch-viewer">BATCH VIEWER</a>
+    <a href="/picker-ui">PICKER UI</a>
+    <a href="/manager-ui">MANAGER UI</a>
     <form method="POST">
         <select name="picker">
-            <option value="All">All Pickers</option>
-            <option value="Eric">Eric</option>
-            <option value="John">John</option>
+            <option value="All">All pickers</option>
+            {% for picker in active_pickers %}
+            <option value="{{picker}}">{{picker}}</option>
+            {% endfor %}
         </select>
         <input type="submit" value="Do the lookup">
     </form>

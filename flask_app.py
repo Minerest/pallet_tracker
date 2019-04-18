@@ -74,7 +74,14 @@ def get_data():
 
 @app.route("/batch-viewer")
 def get_active_pickers():
-    return render_template("batch_viewer.html")
+    Session = db.get_session()
+    entries = Session.query(modals.Picker.name).distinct()
+    pickers = []
+    for entry in entries:
+        pickers.append(entry.name)
+    Session.commit()
+    Session.close()
+    return render_template("batch_viewer.html", active_pickers=pickers)
 
 
 @app.route("/batch-viewer", methods=["POST"])
@@ -98,9 +105,18 @@ def see_the_batches():
         item["name"] = picker_entry.name
         item["batch"] = batch.id
         data_arr.append(item)
+    entries = Session.query(modals.Picker.name).distinct()
+    pickers = []
+    for entry in entries:
+        pickers.append(entry.name)
     Session.commit()
     Session.close()
-    return render_template("batch_viewer.html", items=data_arr)
+    return render_template("batch_viewer.html", items=data_arr, active_pickers=pickers)
+
+@app.route('/')
+@app.route('/<variable>')
+def get_index(variable=None):
+    return render_template("index.html")
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0", port=80)
