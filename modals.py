@@ -8,7 +8,7 @@ Base = declarative_base()
 
 SQLITE = 'sqlite'
 Base = declarative_base()
-engine = create_engine('sqlite:////sqlite3/batches.db', echo=True)
+engine = create_engine('sqlite:////sqlite3/batches.db', echo=False)
 metadata = MetaData()
 metadata.reflect(bind=engine)
 
@@ -55,7 +55,6 @@ class Batch(Base):
 class DropStation(Base):
     __tablename__ = "DropStation"
     id = Column(Integer, autoincrement=True, primary_key=True)
-    picker = Column(String)
     pickerid = Column(Integer, ForeignKey(Picker.id))
     date = Column(Date)
     station = Column(String)

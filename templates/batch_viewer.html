@@ -3,36 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <title>Batch Viewer</title>
+    <link href="/static/index.css" rel="stylesheet" type="text/css">
 </head>
 <body>
 
+    <div class="batch-container">
+        <H1>Batch Viewer</H1>
+        <a href="/batch-viewer">BATCH VIEWER</a>
+        <a href="/picker-ui">PICKER UI</a>
+        <a href="/manager-ui">MANAGER UI</a>
+        <br />
+        <form method="POST">
+            <select name="picker">
+                <option value="All">All pickers</option>
+                {% for picker in active_pickers %}
+                <option value="{{picker}}">{{picker}}</option>
+                {% endfor %}
+            </select>
+            <input type="submit" value="Do the lookup">
+        </form>
 
-    <H1>Batch Viewer</H1>
-    <a href="/batch-viewer">BATCH VIEWER</a>
-    <a href="/picker-ui">PICKER UI</a>
-    <a href="/manager-ui">MANAGER UI</a>
-    <form method="POST">
-        <select name="picker">
-            <option value="All">All pickers</option>
-            {% for picker in active_pickers %}
-            <option value="{{picker}}">{{picker}}</option>
+        {% if items %}
+        <table>
+            <th>Name</th>
+            <th>Batch</th>
+            {% for item in items %}
+            <tr>
+                <td>{{ item["name"] }}</td>
+                <td>{{ item["batch"] }}</td>
+            </tr>
             {% endfor %}
-        </select>
-        <input type="submit" value="Do the lookup">
-    </form>
-
-    {% if items %}
-    <table>
-        <th>Name</th>
-        <th>Batch</th>
-        {% for item in items %}
-        <tr>
-            <td>{{ item["name"] }}</td>
-            <td>{{ item["batch"] }}</td>
-        </tr>
-        {% endfor %}
-    {% endif %}
-    </table>
-
+        {% endif %}
+        </table>
+    </div>
 </body>
 </html>

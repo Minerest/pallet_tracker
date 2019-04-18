@@ -77,6 +77,7 @@ def get_active_pickers():
     Session = db.get_session()
     entries = Session.query(modals.Picker.name).distinct()
     pickers = []
+
     for entry in entries:
         pickers.append(entry.name)
     Session.commit()
