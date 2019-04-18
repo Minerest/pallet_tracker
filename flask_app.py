@@ -4,14 +4,13 @@ from sqlalchemy import exists, update
 import modals
 
 app = Flask(__name__)
-
 db = modals.SqlLitedb()
-
 
 
 @app.route("/manager-ui")
 def manager_ui():
     return render_template('manager_interface.html')
+
 
 @app.route("/manager-ui", methods=['POST'])
 def enter_master_batch():
@@ -75,13 +74,12 @@ def get_data():
 @app.route("/batch-viewer")
 def get_active_pickers():
     Session = db.get_session()
+    #  Get unique pickers
     entries = Session.query(modals.Picker.name).distinct()
-    pickers = []
-
-    for entry in entries:
-        pickers.append(entry.name)
+    pickers = [entry.name for entry in entries]
     Session.commit()
     Session.close()
+    #  Pass that array to the HTML to create a drop down menu of pickers
     return render_template("batch_viewer.html", active_pickers=pickers)
 
 
