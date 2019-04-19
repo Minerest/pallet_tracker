@@ -110,10 +110,12 @@ def see_the_batches():
     Session.close()
     return render_template("batch_viewer.html", items=data_arr, active_pickers=pickers)
 
+
 @app.route('/')
 @app.route('/<variable>')
 def get_index(variable=None):
     return render_template("index.html")
+
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0", port=80)
