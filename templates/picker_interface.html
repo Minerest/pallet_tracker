@@ -4,6 +4,44 @@
     <meta charset="UTF-8">
     <title>Picker UI</title>
     <link href="/static/index.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript">
+    function get_the_vals(){
+        text_field = document.getElementById("textfield");
+        text_val = text_field.value;
+
+        name_input = document.getElementById("form-name");
+        batch_input = document.getElementById("form-batch");
+
+        batch_view = document.getElementById("batch-view");
+        name_view = document.getElementById("name-view");
+        if (text_val == "submit"){
+            form = document.getElementById("picker-form")
+            if (name_input.value == "" || batch_input.value == ""){
+                text_field.value = "";
+                return;
+            }
+            form.submit();
+        }
+        else if (isNaN(text_val)){
+            name_input.value = text_val;
+
+            document.getElementById("name-view").innerHTML = "<H2>" + text_val + "</H2>";
+
+        }
+        else if (!isNaN(text_val)){
+            batch_input.value = text_val;
+            batch_view.value = text_val;
+        }
+        else{
+            return;
+        }
+
+    document.getElementById("textfield").value = "";
+    console.log(text_field.value);
+    }
+
+
+</script>
 </head>
 <body>
 
@@ -11,12 +49,12 @@
     <a href="/batch-viewer">BATCH VIEWER</a>
     <a href="/picker-ui">PICKER UI</a>
     <a href="/manager-ui">MANAGER UI</a>
-    <div id="picker-name"></div>
+    <div id="name-view"></div>
     <div id="batch-view"></div>
     <p>Enter the data:</p>
     <input type="text" placeholder="Scan your name or batch" id="textfield" onchange="get_the_vals()"/>
 
-    <form method="POST" id="picker-form">
+    <form method="POST" id="picker-form" class="hide-me">
         <p>Name: </p><input type="text" name="picker_name" placeholder="PICKER NAME" id="form-name"/>
         <p>Master Batch:</p><input type="text" name="master_batch" placeholder="MASTER BATCH" id="form-batch"/><br /><br />
         <input type="submit" value="Submit" />
@@ -26,44 +64,6 @@
             <p> Entry Added!</p>
         {% endif %}
     </div>
-
-<script type="javascript/text">
-    function get_the_vals(){
-        text_field = document.getelementbyid("textfield");
-        text_val = text_field.value
-
-        name_input = document.getelementbyid("form-name")
-        batch_input = document.getelementbyid("form-batch"
-
-        if (text_val == "submit"){
-            form = document.getelementbyid("picker-form")
-            if (name_input.value == "" || batch_input.value == ""){
-                text_field.value = ""
-                return;
-            }
-            form.submit()
-        }
-        else if (isNaN(text_val){
-            name_field = document.getelementbyid("picker_name")
-            name_field.value = text_val
-
-            picker_display = document.getelementbyid("picker-name")
-            picker_display.value = text_val
-
-        }
-        else if (!isNaN(text_val){
-            batch_input.value += text_val + ","
-            batch_view.innerHTML += "text_val, "
-        }
-        else{
-            return;
-        }
-
-    text_field.value = ""
-    }
-
-
-</script>
 
 </body>
 </html>
