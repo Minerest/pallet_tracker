@@ -11,9 +11,14 @@
     <a href="/batch-viewer">BATCH VIEWER</a>
     <a href="/picker-ui">PICKER UI</a>
     <a href="/manager-ui">MANAGER UI</a>
-    <form method="POST">
-        <p>Name: </p><input type="text" name="picker_name" placeholder="PICKER NAME" />
-        <p>Master Batch:</p><input type="text" name="master_batch" placeholder="MASTER BATCH"/><br /><br />
+    <div id="picker-name"></div>
+    <div id="batch-view"></div>
+    <p>Enter the data:</p>
+    <input type="text" placeholder="Scan your name or batch" id="textfield" onchange="get_the_vals()"/>
+
+    <form method="POST" id="picker-form">
+        <p>Name: </p><input type="text" name="picker_name" placeholder="PICKER NAME" id="form-name"/>
+        <p>Master Batch:</p><input type="text" name="master_batch" placeholder="MASTER BATCH" id="form-batch"/><br /><br />
         <input type="submit" value="Submit" />
     </form>
     <div>
@@ -21,5 +26,44 @@
             <p> Entry Added!</p>
         {% endif %}
     </div>
+
+<script type="javascript/text">
+    function get_the_vals(){
+        text_field = document.getelementbyid("textfield");
+        text_val = text_field.value
+
+        name_input = document.getelementbyid("form-name")
+        batch_input = document.getelementbyid("form-batch"
+
+        if (text_val == "submit"){
+            form = document.getelementbyid("picker-form")
+            if (name_input.value == "" || batch_input.value == ""){
+                text_field.value = ""
+                return;
+            }
+            form.submit()
+        }
+        else if (isNaN(text_val){
+            name_field = document.getelementbyid("picker_name")
+            name_field.value = text_val
+
+            picker_display = document.getelementbyid("picker-name")
+            picker_display.value = text_val
+
+        }
+        else if (!isNaN(text_val){
+            batch_input.value += text_val + ","
+            batch_view.innerHTML += "text_val, "
+        }
+        else{
+            return;
+        }
+
+    text_field.value = ""
+    }
+
+
+</script>
+
 </body>
 </html>
