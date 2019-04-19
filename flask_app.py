@@ -89,13 +89,13 @@ def see_the_batches():
     Session = db.get_session()
     if picker == "All":
         entries = Session.query(modals.Picker, modals.Batch, modals.MasterBatch)\
-        .filter(modals.MasterBatch.pickerid == modals.Picker.id)\
-        .filter(modals.Batch.MasterBatch == modals.MasterBatch.id)
+                            .filter(modals.MasterBatch.pickerid == modals.Picker.id)\
+                            .filter(modals.Batch.MasterBatch == modals.MasterBatch.id)
     else:
         entries = Session.query(modals.Picker, modals.Batch, modals.MasterBatch)\
-            .filter(modals.Picker.name == picker)\
-            .filter(modals.MasterBatch.pickerid == modals.Picker.id)\
-            .filter(modals.Batch.MasterBatch == modals.MasterBatch.id)
+                            .filter(modals.Picker.name == picker)\
+                            .filter(modals.MasterBatch.pickerid == modals.Picker.id)\
+                            .filter(modals.Batch.MasterBatch == modals.MasterBatch.id)
 
     data_arr = []
 
@@ -105,9 +105,7 @@ def see_the_batches():
         item["batch"] = batch.id
         data_arr.append(item)
     entries = Session.query(modals.Picker.name).distinct()
-    pickers = []
-    for entry in entries:
-        pickers.append(entry.name)
+    pickers = [entry.name for entry in entries]
     Session.commit()
     Session.close()
     return render_template("batch_viewer.html", items=data_arr, active_pickers=pickers)
