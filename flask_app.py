@@ -1,5 +1,5 @@
 from flask import Flask, request, render_template
-from sqlalchemy import exists, update
+from sqlalchemy import exists
 
 import modals
 
@@ -66,7 +66,6 @@ def get_data():
 
     master_batch_entry.pickerid = picker_entry.id
     Session.commit()
-    Session.flush()
     Session.close()
     return render_template('picker_interface.html', status="OK")
 
