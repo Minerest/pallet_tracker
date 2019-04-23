@@ -4,6 +4,50 @@
     <meta charset="UTF-8">
     <title>Manager UI</title>
     <link href="/static/index.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript">
+    function get_the_vals(){
+        text_field = document.getElementById("textfield");
+        if (text_field.innerHTML)
+            text_val = text_field.innerHTML;
+        else{
+            return;
+        }
+        master_input = document.getElementById("form-master");
+        batch_input = document.getElementById("form-batch");
+
+        batch_view = document.getElementById("batch-view");
+        master_view = document.getElementById("name-view");
+        if (text_val == "submit"){
+            form = document.getElementById("picker-form")
+            if (name_input.value == "" || batch_input.value == ""){
+                text_field.value = "";
+                return;
+            }
+            form.submit();
+        }
+        else if (isNaN(text_val)){
+            //todo check if barcode fits the format
+            console.log("lol");
+        }
+        else if (!isNaN(text_val)){
+            batch_input.value = text_val;
+            batch_view.innerHTML = "<H2>" + text_val + "</H2>";
+        }
+        else{
+            return;
+        }
+
+    document.getElementById("textfield").value = "";
+    console.log(text_field.value);
+    }
+
+    function focus_the_box(){
+        document.getElementById("textfield").focus()
+    }
+    setInterval(function() { focus_the_box(); }, 1000);
+    setInterval(function() { get_the_vals(); }, 1000);
+
+</script>
 </head>
 <body>
 <div id="container">
@@ -11,11 +55,13 @@
     <a href="/batch-viewer">BATCH VIEWER</a>
     <a href="/picker-ui">PICKER UI</a>
     <a href="/manager-ui">MANAGER UI</a>
-    <p>Enter The Data: </p> <input class="master-input" type="text" placeholder="Master or Regular batches go here" />
+    <div id="master-view"></div>
+    <div id="regular-view"></div>
+    <p>Enter The Data: </p> <input class="master-input" type="text" id="textfield" placeholder="Master or Regular batches go here" />
     <form method="POST">
 
-        <p>Master Batch:</p><input type="text" name="master_batch" placeholder="MASTER BATCH"> <br /><br />
-        <p>Regular Batches:</p><input type="text" name="batch" placeholder="Regular Batch"><br /><br />
+        <p>Master Batch:</p><input type="text" name="master_batch" placeholder="MASTER BATCH" id="form-master"> <br /><br />
+        <p>Regular Batches:</p><input type="text" name="batch" placeholder="Regular Batch" id="form-batch"><br /><br />
         <input type="submit">
     </form>
 </div>

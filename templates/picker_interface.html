@@ -7,8 +7,11 @@
     <script type="text/javascript">
     function get_the_vals(){
         text_field = document.getElementById("textfield");
-        text_val = text_field.value;
-
+        if (text_field.value)
+            text_val = text_field.value;
+        else{
+            return;
+        }
         name_input = document.getElementById("form-name");
         batch_input = document.getElementById("form-batch");
 
@@ -30,7 +33,7 @@
         }
         else if (!isNaN(text_val)){
             batch_input.value = text_val;
-            batch_view.value = text_val;
+            batch_view.innerHTML = "<H2>" + text_val + "</H2>";
         }
         else{
             return;
@@ -40,6 +43,15 @@
     console.log(text_field.value);
     }
 
+    function focus_the_box(){
+        document.getElementById("textfield").focus()
+    }
+    setInterval(function() { focus_the_box(); }, 1000);
+    // TODO: Create a wrapper for the get_the_vals function
+    //       wrapper will check the text box for a valid input,
+    //if it's not valid, do nothing
+    //else store the text in the appropriate box and clear buffer
+    setInterval(function() { get_the_vals(); }, 1000);
 
 </script>
 </head>
@@ -52,7 +64,7 @@
     <div id="name-view"></div>
     <div id="batch-view"></div>
     <p>Enter the data:</p>
-    <input type="text" placeholder="Scan your name or batch" id="textfield" onchange="get_the_vals()"/>
+    <input type="text" placeholder="Scan your name or batch" id="textfield"/>
 
     <form method="POST" id="picker-form" class="hide-me">
         <p>Name: </p><input type="text" name="picker_name" placeholder="PICKER NAME" id="form-name"/>
@@ -62,6 +74,12 @@
     <div>
         {% if status == "OK" %}
             <p> Entry Added!</p>
+        {% endif %}
+        {% if status == "ERROR" %}
+            <P> THERE WAS AN ERROR, DID NOT COMPLETE</P>
+        {% endif %}
+        {% if status == "manager" %}
+            <H1> THE MASTER BATCH SCANNED WAS NEVER INPUT INTO THE DATABASE</H1>
         {% endif %}
     </div>
 </div>

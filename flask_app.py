@@ -1,5 +1,6 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, url_for
 from sqlalchemy import exists
+import os
 
 import modals
 
@@ -16,6 +17,13 @@ def manager_ui():
 def enter_master_batch():
     master_batch = request.form["master_batch"]
     batch = request.form["batch"]
+
+    try:
+        master_batch = int(master_batch)
+        batch = int(batch)
+    except:
+        return render_template("manager_interface.html")
+
     Session = db.get_session()
 
     # check if there's already an entry for the MasterBatch
@@ -48,11 +56,16 @@ def picker_ui():
 def get_data():
     picker_name = request.form['picker_name']
     master_batch = request.form['master_batch']
+    try:
+        _ = int(master_batch)
+    except:
+        return render_template('picker_interface.html', status="ERROR")
     Session = db.get_session()
     master_batch_exists = Session.query(exists().where(modals.MasterBatch.id == master_batch)).scalar()
 
     if not master_batch_exists:
-        return render_template('picker_interface.html', error='manager')
+        Session.close()
+        return render_template('picker_interface.html', status='manager')
 
     picker_exists = Session.query(exists().where(modals.Picker.name == picker_name)).scalar()
     if not picker_exists:
@@ -116,5 +129,17 @@ def get_index(variable=None):
     return render_template("index.html")
 
 
+@app.route("/display_barcodes")
+def display_barcodes():
+    wd = "./static/barcodes/barcodes/"
+    barcodes_to_serve = []
+    for file in os.listdir(wd):
+        barcodes_to_serve.append(wd + file)
+
+    return render_template("barcode_viewer.html", barcodes=barcodes_to_serve)
+
+
 if __name__ == '__main__':
+    app.jinja_env.trim_blocks = True
+    app.jinja_env.lstrip_blocks = True
     app.run(debug=True, host="0.0.0.0", port=80)
