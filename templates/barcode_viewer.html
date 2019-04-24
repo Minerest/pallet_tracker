@@ -5,7 +5,19 @@
     <title>BARCODE VIEWER</title>
 </head>
 <body>
-    <H1>List of barcodes</H1>
+    <a href="/batch-viewer">BATCH VIEWER</a>
+    <a href="/picker-ui">PICKER UI</a>
+    <a href="/manager-ui">MANAGER UI</a>
+    <a href="/display_barcodes">BARCODES</a>
+    <h1>BARCODES</h1>
+
+    <form method="post">
+        <p>How Many Barcodes?</p><input type="number" id="n" name="n" placeholder="Enter a Number"/>
+        <input type="submit" />
+
+    </form>
+
+    <H3>List of barcodes</H3>
     {% for bcode in barcodes %}
         <img src="{{bcode}}">
         <br />

@@ -2,7 +2,9 @@ from flask import Flask, request, render_template, url_for
 from sqlalchemy import exists
 import os
 
+# ================ USER LIBRARIES =====================
 import modals
+import barcode_maker
 
 app = Flask(__name__)
 db = modals.SqlLitedb()
@@ -136,6 +138,17 @@ def display_barcodes():
     for file in os.listdir(wd):
         barcodes_to_serve.append(wd + file)
 
+    return render_template("barcode_viewer.html", barcodes=barcodes_to_serve)
+
+
+@app.route("/display_barcodes", methods=["POST"])
+def gen_barcodes():
+    n = int(request.form["n"])
+    barcode_maker.gen(n)
+    wd = "./static/barcodes/barcodes/"
+    barcodes_to_serve = []
+    for file in os.listdir(wd):
+        barcodes_to_serve.append(wd + file)
     return render_template("barcode_viewer.html", barcodes=barcodes_to_serve)
 
 
