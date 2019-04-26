@@ -15,11 +15,23 @@ db = modals.SqlLitedb()
 
 
 def gen(n=None):
-    session = db.get_session()
+    def _custom(n):
+        barcode_object = b.get_barcode_class("code128")
+        wd = "./static/barcodes/barcodes/"
+        barcode = barcode_object(str(n))
+        barcode.save(wd + str(n))
+        return
+
     wd = "./static/barcodes/barcodes/"
     print("DELETING BARCODES")
     for file in os.listdir(wd):
         os.remove(wd + file)
+    try:
+        n = int(n)
+    except:
+        _custom(n)
+        return
+    session = db.get_session()
     amt = n if n else 10
     amt = 20 if amt >= 100 else amt #  Playing around with ternary operators. Prefer the C++ version for sure
     last_entry = session.query(modals.MasterBatch).order_by(modals.MasterBatch.id.desc()).first()
@@ -27,7 +39,7 @@ def gen(n=None):
     batches_to_print = [batch_id for batch_id in range(last_entry.id + 1, last_entry.id + amt + 1)]
     print("GENERATING BARCODES")
     print("Batches to print", batches_to_print)
-    session.close
+    session.close()
 
     barcode_object = b.get_barcode_class("code128")
 

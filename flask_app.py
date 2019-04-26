@@ -143,7 +143,11 @@ def display_barcodes():
 
 @app.route("/display_barcodes", methods=["POST"])
 def gen_barcodes():
-    n = int(request.form["n"])
+
+    n = request.form["n"]
+    if n == "":
+        return render_template("barcode_viewer.html")
+    n = "".join(c for c in n if c.isalnum())
     barcode_maker.gen(n)
     wd = "./static/barcodes/barcodes/"
     barcodes_to_serve = []
