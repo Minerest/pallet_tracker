@@ -21,7 +21,8 @@ def enter_master_batch():
     master_batch = request.form["master_batch"]
     batch = request.form["batch"]
     master_batch = "".join(n for n in master_batch if n.isnumeric())
-    if int(master_batch) < 10 ^ 9:
+    master_batch = int(master_batch)
+    if master_batch < 10 ^ 9:
         return render_template('manager_interface.html')
     Session = db.get_session()
 
@@ -37,13 +38,16 @@ def enter_master_batch():
     if "," in batch:
         batch = batch.split(",")
         for code in batch:
+            code = int(code)
             batch_exists = Session.query(exists().where(modals.Batch.id == code)).scalar()
             if not batch_exists:
-                batch_entry = modals.Batch(id=code, MasterBatch=master_batch, date=datetime.now())
+                batch_entry = modals.Batch(id=code, MasterBatch=master_batch, date=datetime.now()).one()
                 Session.add(batch_entry)
                 Session.commit()
             else:
-                Session.query().filter(modals.Batch.id == code).update({"MasterBatch": master_batch})
+                batch_row = Session.query(modals.Batch).get(code)
+                batch_row.MasterBatch = master_batch
+                batch_row.date = datetime.now()
                 Session.commit()
     else:
         batch_exists = Session.query(exists().where(modals.Batch.id == batch)).scalar()
@@ -54,8 +58,9 @@ def enter_master_batch():
         else:
             Session.query().filter(modals.Batch.id == batch).update({"MasterBatch": master_batch})
             Session.commit()
+
         Session.close()
-    return render_template('manager_interface.html')
+    return render_template('manager_interface.html', success=True)
 
 
 @app.route("/picker-ui")

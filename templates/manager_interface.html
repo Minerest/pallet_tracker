@@ -90,6 +90,11 @@
     <H2><div id="master-view"></div></H2>
     <H2><div id="batch-view"></div></H2>
     <p>Enter The Data: </p> <input class="master-input" type="text" id="textfield" placeholder="Master or Regular batches go here" />
+
+    {% if success %}
+        <h3>Data entered!</h3>
+    {% endif %}
+
     <form method="POST" id="master-form" class="hide-me">
 
         <p>Master Batch:</p><input type="text" name="master_batch" placeholder="MASTER BATCH" id="form-master"> <br /><br />
