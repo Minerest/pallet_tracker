@@ -44,12 +44,14 @@ class MasterBatch(Base):
     __tablename__ = "MasterBatch"
     id = Column(Integer, autoincrement=False, primary_key=True)
     pickerid = Column(Integer, ForeignKey(Picker.id))
+    date = Column(Date)
 
 
 class Batch(Base):
     __tablename__ = "Batch"
     id = Column(Integer, autoincrement=False, primary_key=True)
     MasterBatch = Column(Integer, ForeignKey(MasterBatch.id))
+    date = Column(Date)
 
 
 class DropStation(Base):
