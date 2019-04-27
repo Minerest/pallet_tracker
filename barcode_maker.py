@@ -33,12 +33,10 @@ def gen(n=None):
         return
     session = db.get_session()
     amt = n if n else 10
-    amt = 20 if amt >= 100 else amt #  Playing around with ternary operators. Prefer the C++ version for sure
+    amt = 20 if amt >= 100 else amt
     last_entry = session.query(modals.MasterBatch).order_by(modals.MasterBatch.id.desc()).first()
-    print("last entry", last_entry.id)
+
     batches_to_print = [ "$" + str(batch_id) for batch_id in range(last_entry.id + 1, last_entry.id + amt + 1)]
-    print("GENERATING BARCODES")
-    print("Batches to print", batches_to_print)
     session.close()
 
     barcode_object = b.get_barcode_class("code128")

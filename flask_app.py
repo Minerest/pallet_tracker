@@ -1,5 +1,6 @@
-from flask import Flask, request, render_template, url_for
+from flask import Flask, request, render_template
 from sqlalchemy import exists
+from datetime import datetime
 import os
 
 # ================ USER LIBRARIES =====================
@@ -19,40 +20,35 @@ def manager_ui():
 def enter_master_batch():
     master_batch = request.form["master_batch"]
     batch = request.form["batch"]
-    master_batch = "".join(n for n in master_batch if n.isalnum())
-    try:
-        master_batch = int(master_batch)
-        batch = int(batch)
-    except:
-        return render_template("manager_interface.html")
-
+    master_batch = "".join(n for n in master_batch if n.isnumeric())
+    if int(master_batch) < 10 ^ 9:
+        return render_template('manager_interface.html')
     Session = db.get_session()
 
     # check if there's already an entry for the MasterBatch
     master_batch_exists = Session.query(exists().where(modals.MasterBatch.id == master_batch)).scalar()
 
     if not master_batch_exists:
-        master_batch_entry = modals.MasterBatch(id=master_batch, pickerid=0)
+        master_batch_entry = modals.MasterBatch(id=master_batch, pickerid=0, date=datetime.now())
         Session.add(master_batch_entry)
         Session.commit()
 
-
-    #  Definitely need to refactor this. Some garbage code right here for sure
+    #  Definitely need to refactor this.
     if "," in batch:
         batch = batch.split(",")
         for code in batch:
-            batch_exists = Session.query(exists().where(modals.Batch.id == batch)).scalar()
+            batch_exists = Session.query(exists().where(modals.Batch.id == code)).scalar()
             if not batch_exists:
-                batch_entry = modals.Batch(id=batch, MasterBatch=master_batch)
+                batch_entry = modals.Batch(id=code, MasterBatch=master_batch, date=datetime.now())
                 Session.add(batch_entry)
                 Session.commit()
             else:
-                Session.query().filter(modals.Batch.id == batch).update({"MasterBatch": master_batch})
+                Session.query().filter(modals.Batch.id == code).update({"MasterBatch": master_batch})
                 Session.commit()
     else:
         batch_exists = Session.query(exists().where(modals.Batch.id == batch)).scalar()
         if not batch_exists:
-            batch_entry = modals.Batch(id=batch, MasterBatch=master_batch)
+            batch_entry = modals.Batch(id=batch, MasterBatch=master_batch, date=datetime.now())
             Session.add(batch_entry)
             Session.commit()
         else:
@@ -160,7 +156,6 @@ def gen_barcodes():
     n = request.form["n"]
     if n == "":
         return render_template("barcode_viewer.html")
-    #n = "".join(c for c in n if c.isalnum())
     barcode_maker.gen(n)
     wd = "./static/barcodes/barcodes/"
     barcodes_to_serve = []
