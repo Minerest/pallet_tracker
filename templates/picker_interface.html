@@ -44,15 +44,27 @@
     }
 
     function focus_the_box(){
-        document.getElementById("textfield").focus()
+        document.getElementById("textfield").focus();
     }
-    setInterval(function() { focus_the_box(); }, 1000);
-    // TODO: Create a wrapper for the get_the_vals function
-    //       wrapper will check the text box for a valid input,
-    //if it's not valid, do nothing
-    //else store the text in the appropriate box and clear buffer
-    setInterval(function() { get_the_vals(); }, 1000);
 
+    function wrapper(){
+        v = document.getElementById("textfield").value
+
+        if (!v){
+            return;
+        }
+        if (v[0] == "$" && v.length > 2 && v[v.length - 1] == "$"){
+            get_the_vals();
+        }
+        if (isNaN(v) && v.length == 10){
+            get_the_vals();
+        }
+        if (v == "submit"){
+            get_the_vals();
+        }
+    }
+    setInterval(function() { focus_the_box(); }, 125);
+    setInterval(function() { wrapper(); }, 250);
 </script>
 </head>
 <body>
@@ -62,8 +74,8 @@
     <a href="/picker-ui">PICKER UI</a>
     <a href="/manager-ui">MANAGER UI</a>
     <a href="/display_barcodes">BARCODES</a>
-    <div id="name-view"></div>
-    <div id="batch-view"></div>
+    <H2><div id="name-view"></div></H2>
+    <H2><div id="batch-view"></div></H2>
     <p>Enter the data:</p>
     <input type="text" placeholder="Scan your name or batch" id="textfield"/>
 

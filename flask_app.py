@@ -19,7 +19,7 @@ def manager_ui():
 def enter_master_batch():
     master_batch = request.form["master_batch"]
     batch = request.form["batch"]
-
+    master_batch = "".join(n for n in master_batch if n.isalnum())
     try:
         master_batch = int(master_batch)
         batch = int(batch)
@@ -36,16 +36,29 @@ def enter_master_batch():
         Session.add(master_batch_entry)
         Session.commit()
 
-    batch_exists = Session.query(exists().where(modals.Batch.id == batch)).scalar()
 
-    if not batch_exists:
-        batch_entry = modals.Batch(id=batch, MasterBatch=master_batch)
-        Session.add(batch_entry)
-        Session.commit()
+    #  Definitely need to refactor this. Some garbage code right here for sure
+    if "," in batch:
+        batch = batch.split(",")
+        for code in batch:
+            batch_exists = Session.query(exists().where(modals.Batch.id == batch)).scalar()
+            if not batch_exists:
+                batch_entry = modals.Batch(id=batch, MasterBatch=master_batch)
+                Session.add(batch_entry)
+                Session.commit()
+            else:
+                Session.query().filter(modals.Batch.id == batch).update({"MasterBatch": master_batch})
+                Session.commit()
     else:
-        Session.query().filter(modals.Batch.id == batch).update({"MasterBatch": master_batch})
-        Session.commit()
-    Session.close()
+        batch_exists = Session.query(exists().where(modals.Batch.id == batch)).scalar()
+        if not batch_exists:
+            batch_entry = modals.Batch(id=batch, MasterBatch=master_batch)
+            Session.add(batch_entry)
+            Session.commit()
+        else:
+            Session.query().filter(modals.Batch.id == batch).update({"MasterBatch": master_batch})
+            Session.commit()
+        Session.close()
     return render_template('manager_interface.html')
 
 
@@ -147,7 +160,7 @@ def gen_barcodes():
     n = request.form["n"]
     if n == "":
         return render_template("barcode_viewer.html")
-    n = "".join(c for c in n if c.isalnum())
+    #n = "".join(c for c in n if c.isalnum())
     barcode_maker.gen(n)
     wd = "./static/barcodes/barcodes/"
     barcodes_to_serve = []

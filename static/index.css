@@ -54,3 +54,15 @@ td {
     visibility: hidden;
 
 }
+
+#master-view {
+    height: 50 px;
+    width: 150 px;
+}
+
+#batch-view {
+
+    height: 50 px;
+    width: 150 px;
+
+}

@@ -6,20 +6,19 @@
     <link href="/static/index.css" rel="stylesheet" type="text/css">
     <script type="text/javascript">
     function get_the_vals(){
+
         text_field = document.getElementById("textfield");
-        if (text_field.innerHTML)
-            text_val = text_field.innerHTML;
-        else{
-            return;
-        }
+        text_val = text_field.value;
+
         master_input = document.getElementById("form-master");
         batch_input = document.getElementById("form-batch");
 
         batch_view = document.getElementById("batch-view");
-        master_view = document.getElementById("name-view");
+        master_view = document.getElementById("master-view");
+
         if (text_val == "submit"){
-            form = document.getElementById("picker-form")
-            if (name_input.value == "" || batch_input.value == ""){
+            form = document.getElementById("master-form")
+            if (master_input.value == "" || batch_input.value == ""){
                 text_field.value = "";
                 return;
             }
@@ -27,25 +26,57 @@
         }
         else if (isNaN(text_val)){
             //todo check if barcode fits the format
-            console.log("lol");
+            if (text_val[0] == "$"){
+                master_input.value = text_val;
+                master_view.innerText = "Master Batch: " + text_val;
+            }
         }
         else if (!isNaN(text_val)){
-            batch_input.value = text_val;
-            batch_view.innerHTML = "<H2>" + text_val + "</H2>";
-        }
-        else{
-            return;
-        }
 
-    document.getElementById("textfield").value = "";
-    console.log(text_field.value);
+            if (!batch_input.value){
+                batch_input.value = text_val;
+                batch_view.innerText = "Batches: " + text_val;
+            }
+            else{
+                batch_input.value += "," + text_val;
+                batch_view.innerText += ", " + text_val;
+            }
+
+        }
+        document.getElementById("textfield").value = "";
+        console.log(text_field.value);
     }
 
     function focus_the_box(){
-        document.getElementById("textfield").focus()
+        document.getElementById("textfield").focus();
     }
-    setInterval(function() { focus_the_box(); }, 1000);
-    setInterval(function() { get_the_vals(); }, 1000);
+
+
+    // This is used to verify the input before it is sent up to the server
+    // There are 2 fixed lengths, 5 and 10 for each barcode. The master barcode will have a '$' as a flag
+    function wrapper(){
+        text_field = document.getElementById("textfield");
+        val = text_field.value;
+
+        // condition for batch
+        if (val.length == 5 && !isNaN(val)){
+            get_the_vals();
+            return
+        }// condition for Master Batch
+        if (val.length == 10 && isNaN(val)){
+            get_the_vals();
+            return;
+        }
+        if (val == "submit"){
+            get_the_vals()
+            return;
+
+        }
+
+    }
+
+    setInterval(function() { focus_the_box(); }, 125);
+    setInterval(function() { wrapper(); }, 350);
 
 </script>
 </head>
@@ -56,13 +87,13 @@
     <a href="/picker-ui">PICKER UI</a>
     <a href="/manager-ui">MANAGER UI</a>
     <a href="/display_barcodes">BARCODES</a>
-    <div id="master-view"></div>
-    <div id="regular-view"></div>
+    <H2><div id="master-view"></div></H2>
+    <H2><div id="batch-view"></div></H2>
     <p>Enter The Data: </p> <input class="master-input" type="text" id="textfield" placeholder="Master or Regular batches go here" />
-    <form method="POST">
+    <form method="POST" id="master-form" class="hide-me">
 
         <p>Master Batch:</p><input type="text" name="master_batch" placeholder="MASTER BATCH" id="form-master"> <br /><br />
-        <p>Regular Batches:</p><input type="text" name="batch" placeholder="Regular Batch" id="form-batch"><br /><br />
+        <p>Batches:</p><input type="text" name="batch" placeholder="Regular Batch" id="form-batch"><br /><br />
         <input type="submit">
     </form>
 </div>
