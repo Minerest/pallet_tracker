@@ -45,13 +45,14 @@ def enter_master_batch():
             batch_exists = Session.query(exists().where(modals.Batch.id == code)).scalar()
             if not batch_exists:
                 batch_entry = modals.Batch(id=code, MasterBatch=master_batch, date=datetime.now(),
-                                           time=gen_utils.time_to_float()).one()
+                                           time=gen_utils.time_to_float())
                 Session.add(batch_entry)
                 Session.commit()
             else:
                 batch_row = Session.query(modals.Batch).get(code)
                 batch_row.MasterBatch = master_batch
                 batch_row.date = datetime.now()
+                batch_row.time = gen_utils.time_to_float()
                 Session.commit()
     else:
         batch_exists = Session.query(exists().where(modals.Batch.id == batch)).scalar()
@@ -62,8 +63,8 @@ def enter_master_batch():
             Session.commit()
         else:
             Session.query().filter(modals.Batch.id == batch).update({"MasterBatch": master_batch,
-                                                                     "date":datetime.now(),
-                                                                     "time":gen_utils.time_to_float()})
+                                                                     "date": datetime.now(),
+                                                                     "time": gen_utils.time_to_float()})
             Session.commit()
 
         Session.close()
@@ -146,9 +147,10 @@ def see_the_batches():
         item["batch"] = batch.id
         item["date"] = master.date
         hour, minute = gen_utils.float_to_time(master.time)
-        item["time"] = str(hour) + " : " + str(minute)
+        item["time"] = str(hour) + ":" + str(minute)
         print(master.date)
         data_arr.append(item)
+
     entries = Session.query(modals.Picker.name).distinct()
     pickers = [entry.name for entry in entries]
     Session.commit()
