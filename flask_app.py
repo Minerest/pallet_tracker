@@ -73,7 +73,13 @@ def get_data():
     picker_name = request.form['picker_name']
     master_batch = request.form['master_batch']
     try:
+        assert(master_batch[0] == "$")
+        assert(picker_name[0] == "$")
+        assert(picker_name[-1] == "$")
+        picker_name = picker_name.strip("$")
+        master_batch = master_batch.strip("$")
         _ = int(master_batch)
+
     except:
         return render_template('picker_interface.html', status="ERROR")
     Session = db.get_session()
@@ -131,6 +137,8 @@ def see_the_batches():
         item = dict()
         item["name"] = picker_entry.name
         item["batch"] = batch.id
+        item["date"] = master.date
+        print(master.date)
         data_arr.append(item)
     entries = Session.query(modals.Picker.name).distinct()
     pickers = [entry.name for entry in entries]
@@ -162,11 +170,16 @@ def gen_barcodes():
     if n == "":
         return render_template("barcode_viewer.html")
     barcode_maker.gen(n)
+    return render_template("barcode_viewer.html")
+
+
+@app.route("/barcodes")
+def read_barcodes():
     wd = "./static/barcodes/barcodes/"
     barcodes_to_serve = []
     for file in os.listdir(wd):
         barcodes_to_serve.append(wd + file)
-    return render_template("barcode_viewer.html", barcodes=barcodes_to_serve)
+    return render_template("barcodes.html", barcodes=barcodes_to_serve)
 
 
 if __name__ == '__main__':

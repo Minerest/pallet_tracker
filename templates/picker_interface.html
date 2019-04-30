@@ -18,25 +18,22 @@
         batch_view = document.getElementById("batch-view");
         name_view = document.getElementById("name-view");
         if (text_val == "submit"){
-            form = document.getElementById("picker-form")
+            form = document.getElementById("picker-form");
             if (name_input.value == "" || batch_input.value == ""){
                 text_field.value = "";
                 return;
             }
             form.submit();
         }
-        else if (isNaN(text_val)){
+        else if (text_val[text_val.length - 1] == "$" && text_val[0] == "$"){
             name_input.value = text_val;
 
             document.getElementById("name-view").innerHTML = "<H2>" + text_val + "</H2>";
 
         }
-        else if (!isNaN(text_val)){
+        else if (text_val.length >= 10 && !isNaN(text_val[text_val.length - 1])){
             batch_input.value = text_val;
             batch_view.innerHTML = "<H2>" + text_val + "</H2>";
-        }
-        else{
-            return;
         }
 
     document.getElementById("textfield").value = "";
@@ -48,15 +45,15 @@
     }
 
     function wrapper(){
-        v = document.getElementById("textfield").value
+        v = document.getElementById("textfield").value;
 
         if (!v){
             return;
         }
-        if (v[0] == "$" && v.length > 2 && v[v.length - 1] == "$"){
+        if (v[0] == "$" && v[v.length - 1] == "$" && v.length > 2){
             get_the_vals();
         }
-        if (isNaN(v) && v.length >= 10){
+        if (v[0] == "$" && !isNaN(v[v.length - 1]) && v.length >= 10){
             get_the_vals();
         }
         if (v == "submit"){

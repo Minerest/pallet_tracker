@@ -14,15 +14,9 @@
 
     <form method="post">
         <p>How Many Barcodes?</p><input type="text" id="n" name="n" placeholder="Enter a Number"/>
-        <input type="submit" />
+        <input type="submit"/>
 
     </form>
-
-    <H3>List of barcodes</H3>
-    {% for bcode in barcodes %}
-        <img src="{{bcode}}">
-        <br />
-        <br />
-    {% endfor %}
+    <a href="./barcodes" target="_blank">View</a>
 </body>
 </html>

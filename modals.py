@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Integer, Date, ForeignKey
+from sqlalchemy import Column, String, Integer, Date, ForeignKey, Float
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import MetaData, create_engine
 from sqlalchemy.orm import sessionmaker
@@ -45,13 +45,14 @@ class MasterBatch(Base):
     id = Column(Integer, autoincrement=False, primary_key=True)
     pickerid = Column(Integer, ForeignKey(Picker.id))
     date = Column(Date)
-
+    time = Column(Float)
 
 class Batch(Base):
     __tablename__ = "Batch"
     id = Column(Integer, autoincrement=False, primary_key=True)
     MasterBatch = Column(Integer, ForeignKey(MasterBatch.id))
     date = Column(Date)
+    time = Column(Float)
 
 
 class DropStation(Base):
@@ -59,4 +60,5 @@ class DropStation(Base):
     id = Column(Integer, autoincrement=True, primary_key=True)
     pickerid = Column(Integer, ForeignKey(Picker.id))
     date = Column(Date)
+    time = Column(Float)
     station = Column(String)
