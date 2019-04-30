@@ -6,6 +6,7 @@ import os
 # ================ USER LIBRARIES =====================
 import modals
 import barcode_maker
+import gen_utils
 
 app = Flask(__name__)
 db = modals.SqlLitedb()
@@ -30,18 +31,21 @@ def enter_master_batch():
     master_batch_exists = Session.query(exists().where(modals.MasterBatch.id == master_batch)).scalar()
 
     if not master_batch_exists:
-        master_batch_entry = modals.MasterBatch(id=master_batch, pickerid=0, date=datetime.now())
+
+        master_batch_entry = modals.MasterBatch(id=master_batch, pickerid=0, date=datetime.now(),
+                                                time=gen_utils.time_to_float())
         Session.add(master_batch_entry)
         Session.commit()
 
-    #  Definitely need to refactor this.
+    #  Definitely need to refactor this. Sorry =(
     if "," in batch:
         batch = batch.split(",")
         for code in batch:
             code = int(code)
             batch_exists = Session.query(exists().where(modals.Batch.id == code)).scalar()
             if not batch_exists:
-                batch_entry = modals.Batch(id=code, MasterBatch=master_batch, date=datetime.now()).one()
+                batch_entry = modals.Batch(id=code, MasterBatch=master_batch, date=datetime.now(),
+                                           time=gen_utils.time_to_float()).one()
                 Session.add(batch_entry)
                 Session.commit()
             else:
@@ -52,11 +56,14 @@ def enter_master_batch():
     else:
         batch_exists = Session.query(exists().where(modals.Batch.id == batch)).scalar()
         if not batch_exists:
-            batch_entry = modals.Batch(id=batch, MasterBatch=master_batch, date=datetime.now())
+            batch_entry = modals.Batch(id=batch, MasterBatch=master_batch,
+                                       date=datetime.now(), time=gen_utils.time_to_float())
             Session.add(batch_entry)
             Session.commit()
         else:
-            Session.query().filter(modals.Batch.id == batch).update({"MasterBatch": master_batch})
+            Session.query().filter(modals.Batch.id == batch).update({"MasterBatch": master_batch,
+                                                                     "date":datetime.now(),
+                                                                     "time":gen_utils.time_to_float()})
             Session.commit()
 
         Session.close()
@@ -138,6 +145,8 @@ def see_the_batches():
         item["name"] = picker_entry.name
         item["batch"] = batch.id
         item["date"] = master.date
+        hour, minute = gen_utils.float_to_time(master.time)
+        item["time"] = str(hour) + " : " + str(minute)
         print(master.date)
         data_arr.append(item)
     entries = Session.query(modals.Picker.name).distinct()
