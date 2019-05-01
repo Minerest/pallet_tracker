@@ -45,13 +45,14 @@ td {
 
     width: 30%;
     height: 60px;
-
-
 }
 
 .hide-me {
-
     visibility: hidden;
+}
+
+.next-prev {
+    margin-top: 20px;
 
 }
 

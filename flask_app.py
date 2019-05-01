@@ -3,13 +3,15 @@ from sqlalchemy import exists
 from datetime import datetime
 import os
 
-# ================ USER LIBRARIES =====================
+# ================ USER LIBRARIES ===================== #
 import modals
 import barcode_maker
 import gen_utils
 
 app = Flask(__name__)
 db = modals.SqlLitedb()
+
+# TODO: Fix the offset issue and merge back into the master branch
 
 
 @app.route("/manager-ui")
@@ -22,16 +24,17 @@ def enter_master_batch():
     master_batch = request.form["master_batch"]
     batch = request.form["batch"]
     master_batch = "".join(n for n in master_batch if n.isnumeric())
-    master_batch = int(master_batch)
-    if master_batch < 10 ^ 9:
-        return render_template('manager_interface.html')
+    try:
+        master_batch = int(master_batch)
+    except:
+        return render_template("manager_interface.html")
+
     Session = db.get_session()
 
     # check if there's already an entry for the MasterBatch
     master_batch_exists = Session.query(exists().where(modals.MasterBatch.id == master_batch)).scalar()
 
     if not master_batch_exists:
-
         master_batch_entry = modals.MasterBatch(id=master_batch, pickerid=0, date=datetime.now(),
                                                 time=gen_utils.time_to_float())
         Session.add(master_batch_entry)
@@ -39,21 +42,7 @@ def enter_master_batch():
 
     #  Definitely need to refactor this. Sorry =(
     if "," in batch:
-        batch = batch.split(",")
-        for code in batch:
-            code = int(code)
-            batch_exists = Session.query(exists().where(modals.Batch.id == code)).scalar()
-            if not batch_exists:
-                batch_entry = modals.Batch(id=code, MasterBatch=master_batch, date=datetime.now(),
-                                           time=gen_utils.time_to_float())
-                Session.add(batch_entry)
-                Session.commit()
-            else:
-                batch_row = Session.query(modals.Batch).get(code)
-                batch_row.MasterBatch = master_batch
-                batch_row.date = datetime.now()
-                batch_row.time = gen_utils.time_to_float()
-                Session.commit()
+        gen_utils.add_multiple_batch_entries(batch, Session, master_batch)
     else:
         batch_exists = Session.query(exists().where(modals.Batch.id == batch)).scalar()
         if not batch_exists:
@@ -122,24 +111,35 @@ def get_active_pickers():
     Session.commit()
     Session.close()
     #  Pass that array to the HTML to create a drop down menu of pickers
-    return render_template("batch_viewer.html", active_pickers=pickers)
+
+    offset = dict()
+    offset["offset"] = 0
+    offset["limit"] = 1
+
+    return render_template("batch_viewer.html", active_pickers=pickers, offset=offset)
 
 
 @app.route("/batch-viewer", methods=["POST"])
 def see_the_batches():
+    offset = dict()
     picker = request.form["picker"]
+    offset["offset"] = request.form["offset"]
+    offset["limit"] = 1
     Session = db.get_session()
     if picker == "All":
         entries = Session.query(modals.Picker, modals.Batch, modals.MasterBatch)\
                             .filter(modals.MasterBatch.pickerid == modals.Picker.id)\
-                            .filter(modals.Batch.MasterBatch == modals.MasterBatch.id)
+                            .filter(modals.Batch.MasterBatch == modals.MasterBatch.id)\
+                            .order_by(modals.Batch.date.desc(), modals.Batch.time.desc())
+
     else:
         entries = Session.query(modals.Picker, modals.Batch, modals.MasterBatch)\
                             .filter(modals.Picker.name == picker)\
                             .filter(modals.MasterBatch.pickerid == modals.Picker.id)\
-                            .filter(modals.Batch.MasterBatch == modals.MasterBatch.id)
+                            .filter(modals.Batch.MasterBatch == modals.MasterBatch.id) \
+                            .order_by(modals.Batch.date.desc(), modals.Batch.time.desc())
 
-    data_arr = []
+    table_items = []
 
     for picker_entry, batch, master in entries:
         item = dict()
@@ -148,14 +148,13 @@ def see_the_batches():
         item["date"] = master.date
         hour, minute = gen_utils.float_to_time(master.time)
         item["time"] = str(hour) + ":" + str(minute)
-        print(master.date)
-        data_arr.append(item)
+        table_items.append(item)
 
     entries = Session.query(modals.Picker.name).distinct()
     pickers = [entry.name for entry in entries]
     Session.commit()
     Session.close()
-    return render_template("batch_viewer.html", items=data_arr, active_pickers=pickers)
+    return render_template("batch_viewer.html", items=table_items, active_pickers=pickers, offset=offset)
 
 
 @app.route('/')
