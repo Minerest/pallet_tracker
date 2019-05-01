@@ -130,15 +130,16 @@ def see_the_batches():
         entries = Session.query(modals.Picker, modals.Batch, modals.MasterBatch)\
                             .filter(modals.MasterBatch.pickerid == modals.Picker.id)\
                             .filter(modals.Batch.MasterBatch == modals.MasterBatch.id)\
-                            .order_by(modals.Batch.date.desc(), modals.Batch.time.desc())
+                            .order_by(modals.Batch.date.desc(), modals.Batch.time.desc())\
+                            .limit(500)
 
     else:
         entries = Session.query(modals.Picker, modals.Batch, modals.MasterBatch)\
                             .filter(modals.Picker.name == picker)\
                             .filter(modals.MasterBatch.pickerid == modals.Picker.id)\
                             .filter(modals.Batch.MasterBatch == modals.MasterBatch.id) \
-                            .order_by(modals.Batch.date.desc(), modals.Batch.time.desc())
-
+                            .order_by(modals.Batch.date.desc(), modals.Batch.time.desc())\
+                            .limit(500)
     table_items = []
 
     for picker_entry, batch, master in entries:
