@@ -14,14 +14,15 @@
         <a href="/manager-ui">MANAGER UI</a>
         <a href="/display_barcodes">BARCODES</a>
         <br />
-        <form method="POST">
+        <form method="POST" id="the_form">
             <select name="picker">
                 <option value="All">All pickers</option>
                 {% for picker in active_pickers %}
                 <option value="{{picker}}">{{picker}}</option>
                 {% endfor %}
             </select>
-            <input type="submit" value="Do the lookup">
+            <input type="hidden" value="{{ offset['offset'] }}" id="offset" name="offset">
+            <input type="submit" value="Do the lookup" id="submit_button">
         </form>
 
         {% if items %}
@@ -38,8 +39,33 @@
                 <td>{{ item["time"] }}</td>
             </tr>
             {% endfor %}
-        {% endif %}
         </table>
+        <input type="button" class="next-prev" value="Next" onclick="next_pg()">
+        <input type="button" class="next-prev" value="Prev">
+        {% endif %}
     </div>
+<script>
+
+    function hit_submit(){
+        the_form = document.getElementById("the_form");
+        the_form.submit();
+    }
+
+    function next_pg(){
+        var offset = document.getElementById("offset");
+        offset.value += parseInt({{ offset["limit"] }});
+        hit_submit();
+    }
+
+    function prev_pg(){
+        var offset = document.getElementById("offset");
+        offset.value -= int({{ offset["limit"] }});
+        if (int(offset.value < 0)){
+            offset.value = 0;
+        }
+        hit_submit();
+    }
+
+</script>
 </body>
 </html>

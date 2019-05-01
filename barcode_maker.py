@@ -16,6 +16,7 @@ db = modals.SqlLitedb()
 
 def gen(n=None):
     def _custom(n):
+        n = "$" + n + "$"
         barcode_object = b.get_barcode_class("code128")
         wd = "./static/barcodes/barcodes/"
         barcode = barcode_object(str(n))
