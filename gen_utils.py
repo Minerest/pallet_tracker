@@ -33,10 +33,23 @@ def add_multiple_batch_entries(batch, Session, master_batch):
     for code in batch:
         code = int(code)
         batch_exists = Session.query(exists().where(modals.Batch.id == code)).scalar()
+        flag = False
         if not batch_exists:
             batch_entry = modals.Batch(id=code, MasterBatch=master_batch, date=datetime.now(),
                                        time=time_to_float())
-            bulk_entries.append()
+            bulk_entries.append(batch_entry)
+            flag = True
+        else:
+
+            batch_row = Session.query(modals.Batch).get(code)
+            batch_row.MasterBatch = master_batch
+            batch_row.date = datetime.now()
+            batch_row.time = time_to_float()
+
+    Session.bulk_save_objects(bulk_entries)
+    Session.commit()
+
+
 
 
 if __name__ == "__main__":

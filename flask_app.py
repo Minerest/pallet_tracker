@@ -3,7 +3,7 @@ from sqlalchemy import exists
 from datetime import datetime
 import os
 
-# ================ USER LIBRARIES =====================
+# ================ USER LIBRARIES ===================== #
 import modals
 import barcode_maker
 import gen_utils
@@ -42,21 +42,7 @@ def enter_master_batch():
 
     #  Definitely need to refactor this. Sorry =(
     if "," in batch:
-        batch = batch.split(",")
-        for code in batch:
-            code = int(code)
-            batch_exists = Session.query(exists().where(modals.Batch.id == code)).scalar()
-            if not batch_exists:
-                batch_entry = modals.Batch(id=code, MasterBatch=master_batch, date=datetime.now(),
-                                           time=gen_utils.time_to_float())
-                Session.add(batch_entry)
-                Session.commit()
-            else:
-                batch_row = Session.query(modals.Batch).get(code)
-                batch_row.MasterBatch = master_batch
-                batch_row.date = datetime.now()
-                batch_row.time = gen_utils.time_to_float()
-                Session.commit()
+        gen_utils.add_multiple_batch_entries(batch, Session, master_batch)
     else:
         batch_exists = Session.query(exists().where(modals.Batch.id == batch)).scalar()
         if not batch_exists:
@@ -162,7 +148,6 @@ def see_the_batches():
         item["date"] = master.date
         hour, minute = gen_utils.float_to_time(master.time)
         item["time"] = str(hour) + ":" + str(minute)
-        print(master.date)
         table_items.append(item)
 
     entries = Session.query(modals.Picker.name).distinct()
