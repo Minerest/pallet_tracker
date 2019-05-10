@@ -59,8 +59,14 @@ class DropStation(Base):
     __tablename__ = "DropStation"
     id = Column(Integer, autoincrement=True, primary_key=True)
     pickerid = Column(Integer, ForeignKey(Picker.id))
+    masterid = Column(Integer, ForeignKey(MasterBatch.id))
     date = Column(Date)
     time = Column(Float)
     station = Column(String)
 
+
 db = SqlLitedb()
+
+
+if __name__ == "__main__":
+    Base.metadata.create_all(engine)

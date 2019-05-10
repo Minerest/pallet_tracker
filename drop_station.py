@@ -7,7 +7,7 @@ class Station:
         self.station = station
         self.url = "http://127.0.0.1/drop_station"
 
-    def make_the_drop(self, name):
+    def make_the_drop(self, name, master_batch):
         if name[0] == "$" and name[-1] == "$":
             name = name.strip("$")
         else:
@@ -15,7 +15,8 @@ class Station:
 
         post_req = {
             "station": self.station,
-            "picker": name
+            "picker": name,
+            "masterid": master_batch
         }
         r = requests.post(url=self.url, data=post_req)
         if r.status_code >= 300:
@@ -23,6 +24,7 @@ class Station:
             print(self.url)
             print(post_req)
 
+
 if __name__ == "__main__":
     test_station = Station("test")
-    test_station.make_the_drop("$EricDiaz$")
+    test_station.make_the_drop("$EricDiaz$", "$123456792")

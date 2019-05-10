@@ -166,12 +166,21 @@ def add_to_drop_station():
     picker_id = Session.query(modals.Picker.id)\
                        .filter(modals.Picker.name == picker).one()
     dropstation["station"] = request.form["station"]
+    dropstation["masterid"] = request.form["masterid"]
     dropstation["date"] = datetime.now()
     dropstation["time"] = gen_utils.time_to_float()
     dropstation["picker_id"] = picker_id.id
 
+    dropstation["masterid"] = dropstation["masterid"].strip("$")
+
+    b = Session.query(modals.MasterBatch).filter(modals.MasterBatch.id == dropstation["masterid"]).scalar()
+
+    if not b:
+        return ""
+
     db_entry = modals.DropStation(pickerid=dropstation["picker_id"], date=dropstation["date"],
-                                  time=dropstation["time"], station=dropstation["station"])
+                                  time=dropstation["time"], station=dropstation["station"],
+                                  masterid=dropstation["masterid"])
     Session.add(db_entry)
     Session.commit()
     Session.close()
@@ -210,6 +219,40 @@ def read_barcodes():
     for file in os.listdir(wd):
         barcodes_to_serve.append(wd + file)
     return render_template("barcodes.html", barcodes=barcodes_to_serve)
+
+
+@app.route("/locations")
+def get_batches_in_dropstation():
+    try:
+        batch = request.args["batch"]
+    except:
+        return render_template("locations.html", location=None, picker=None)
+
+    Session = modals.db.get_session()
+
+    try:
+        batch_entry = Session.query(modals.Batch).filter(modals.Batch.id == batch).one()
+    except:
+        Session.close()
+        return render_template("locations.html", location=None, picker=None)
+
+    try:
+        locations = Session.query(modals.DropStation).filter(modals.DropStation.masterid == batch_entry.MasterBatch)
+    except:
+        locations = None
+
+    master_entry = Session.query(modals.MasterBatch).filter(modals.MasterBatch.id == batch_entry.MasterBatch).one()
+    picker = Session.query(modals.Picker).filter(modals.Picker.id == master_entry.pickerid).one()
+
+    Session.close()
+    arr = [loc.__dict__ for loc in locations]
+
+    for item in arr:
+        hr, min = gen_utils.float_to_time(item["time"])
+        item["time"] = str(hr) + ":" + str(min)
+
+    pd = picker.__dict__
+    return render_template("locations.html", locations=arr, picker=pd)
 
 
 if __name__ == '__main__':
