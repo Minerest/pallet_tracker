@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LOCATIONS</title>
+    <link href="/static/index.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div id="container">
+<div id="top">
+    <img src="/static/ess.png">
+</div>
+
+<H2>RELEVANT LINKS:</H2>
+    <a href="/batch-viewer">BATCH VIEWER</a>
+    <a href="/picker-ui">PICKER UI</a>
+    <a href="/manager-ui">MANAGER UI</a>
+    <a href="/display_barcodes">BARCODES</a>
+
+    {% if locations %}
+    <table>
+        <th>name</th>
+        <th>station</th>
+        <th>date</th>
+        <th>time</th>
+        {% for loc in locations %}
+            <tr>
+                <td>{{picker["name"]}}</td>
+                <td>{{loc["station"]}}</td>
+                <td>{{loc["date"]}}</td>
+                <td>{{loc["time"]}}</td>
+            </tr>
+        {% endfor %}
+    {% endif %}
+
+    <form id="location" action="/locations">
+        <input type="text" name="batch">
+        <button type="submit">Submit</button>
+    </form>
+
+</div>
+</body>
+</html>
