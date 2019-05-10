@@ -31,12 +31,14 @@
             <th>Batch</th>
             <th>Date</th>
             <th>Time</th>
+            <th>Drop Station</th>
             {% for item in items %}
             <tr>
                 <td>{{ item["name"] }}</td>
                 <td>{{ item["batch"] }}</td>
                 <td>{{ item["date"] }}</td>
                 <td>{{ item["time"] }}</td>
+                <td> {{ item["drop"] }}</td>
             </tr>
             {% endfor %}
         </table>
@@ -44,28 +46,26 @@
         <input type="button" class="next-prev" value="Prev">
         {% endif %}
     </div>
-<script>
 
-    function hit_submit(){
-        the_form = document.getElementById("the_form");
-        the_form.submit();
-    }
+    <!--function hit_submit(){-->
+        <!--the_form = document.getElementById("the_form");-->
+        <!--the_form.submit();-->
+    <!--}-->
 
-    function next_pg(){
-        var offset = document.getElementById("offset");
-        offset.value += parseInt({{ offset["limit"] }});
-        hit_submit();
-    }
+    <!--function next_pg(){-->
+        <!--var offset = document.getElementById("offset");-->
+        <!--offset.value += parseInt({{ offset["limit"] }});-->
+        <!--hit_submit();-->
+    <!--}-->
 
-    function prev_pg(){
-        var offset = document.getElementById("offset");
-        offset.value -= int({{ offset["limit"] }});
-        if (int(offset.value < 0)){
-            offset.value = 0;
-        }
-        hit_submit();
-    }
+    <!--function prev_pg(){-->
+        <!--var offset = document.getElementById("offset");-->
+        <!--offset.value -= int({{ offset["limit"] }});-->
+        <!--if (int(offset.value < 0)){-->
+            <!--offset.value = 0;-->
+        <!--}-->
+        <!--hit_submit();-->
+    <!--}-->
 
-</script>
 </body>
 </html>

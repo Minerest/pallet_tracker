@@ -33,7 +33,6 @@ class SqlLitedb:
         return session
 
 
-
 class Picker(Base):
     __tablename__ = "Picker"
     id = Column(Integer, autoincrement=True, primary_key=True)
@@ -46,6 +45,7 @@ class MasterBatch(Base):
     pickerid = Column(Integer, ForeignKey(Picker.id))
     date = Column(Date)
     time = Column(Float)
+
 
 class Batch(Base):
     __tablename__ = "Batch"
@@ -62,3 +62,5 @@ class DropStation(Base):
     date = Column(Date)
     time = Column(Float)
     station = Column(String)
+
+db = SqlLitedb()

@@ -9,9 +9,7 @@ import barcode_maker
 import gen_utils
 
 app = Flask(__name__)
-db = modals.SqlLitedb()
 
-# TODO: Fix the offset issue and merge back into the master branch
 
 
 @app.route("/manager-ui")
@@ -29,7 +27,7 @@ def enter_master_batch():
     except:
         return render_template("manager_interface.html")
 
-    Session = db.get_session()
+    Session = modals.db.get_session()
 
     # check if there's already an entry for the MasterBatch
     master_batch_exists = Session.query(exists().where(modals.MasterBatch.id == master_batch)).scalar()
@@ -40,7 +38,7 @@ def enter_master_batch():
         Session.add(master_batch_entry)
         Session.commit()
 
-    #  Definitely need to refactor this. Sorry =(
+
     if "," in batch:
         gen_utils.add_multiple_batch_entries(batch, Session, master_batch)
     else:
@@ -79,7 +77,7 @@ def get_data():
 
     except:
         return render_template('picker_interface.html', status="ERROR")
-    Session = db.get_session()
+    Session = modals.db.get_session()
     master_batch_exists = Session.query(exists().where(modals.MasterBatch.id == master_batch)).scalar()
 
     if not master_batch_exists:
@@ -104,7 +102,7 @@ def get_data():
 
 @app.route("/batch-viewer")
 def get_active_pickers():
-    Session = db.get_session()
+    Session = modals.db.get_session()
     #  Get unique pickers
     entries = Session.query(modals.Picker.name).distinct()
     pickers = [entry.name for entry in entries]
@@ -125,7 +123,7 @@ def see_the_batches():
     picker = request.form["picker"]
     offset["offset"] = request.form["offset"]
     offset["limit"] = 1
-    Session = db.get_session()
+    Session = modals.db.get_session()
     if picker == "All":
         entries = Session.query(modals.Picker, modals.Batch, modals.MasterBatch)\
                             .filter(modals.MasterBatch.pickerid == modals.Picker.id)\
@@ -157,6 +155,27 @@ def see_the_batches():
     Session.close()
     return render_template("batch_viewer.html", items=table_items, active_pickers=pickers, offset=offset)
 
+
+@app.route("/drop_station", methods=["POST"])
+def add_to_drop_station():
+
+    Session = modals.db.get_session()
+
+    dropstation = dict()
+    picker = request.form["picker"]
+    picker_id = Session.query(modals.Picker.id)\
+                       .filter(modals.Picker.name == picker).one()
+    dropstation["station"] = request.form["station"]
+    dropstation["date"] = datetime.now()
+    dropstation["time"] = gen_utils.time_to_float()
+    dropstation["picker_id"] = picker_id.id
+
+    db_entry = modals.DropStation(pickerid=dropstation["picker_id"], date=dropstation["date"],
+                                  time=dropstation["time"], station=dropstation["station"])
+    Session.add(db_entry)
+    Session.commit()
+    Session.close()
+    return ""
 
 @app.route('/')
 @app.route('/<variable>')
