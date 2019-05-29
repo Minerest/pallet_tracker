@@ -1,29 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>BARCODE VIEWER</title>
-     <link href="/static/index.css" rel="stylesheet" type="text/css">
-</head>
-<body>
-<div class="container">
-<div id="top">
-
-    <img src="/static/ess.png">
-</div>
-
-    <a href="/batch-viewer">BATCH VIEWER</a>
-    <a href="/picker-ui">PICKER UI</a>
-    <a href="/manager-ui">MANAGER UI</a>
-    <a href="/display_barcodes">BARCODES</a>
-    <h1>BARCODES</h1>
-
-    <form method="post">
+{% extends "layout.html" %}
+{% block content %}
+<form method="post">
         <p>How Many Barcodes?</p><input type="text" id="n" name="n" placeholder="Enter a Number"/>
         <input type="submit"/>
 
     </form>
     <a href="./barcodes" target="_blank">View</a>
-</div>
-</body>
-</html>
+{% endblock %}

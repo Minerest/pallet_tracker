@@ -36,10 +36,14 @@ td {
 }
 
 
-.container {
+#container {
 
-    padding-left: 200px;
+    margin-left: 100px;
 
+}
+
+#content {
+    margin-left: 100px;
 }
 
 .master-input {

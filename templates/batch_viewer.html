@@ -1,21 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Batch Viewer</title>
-    <link href="/static/index.css" rel="stylesheet" type="text/css">
-</head>
-<body>
-<div class="container">
-<div id="top">
-    <img src="/static/ess.png">
-</div>
-        <H1>Batch Viewer</H1>
-        <a href="/batch-viewer">BATCH VIEWER</a>
-        <a href="/picker-ui">PICKER UI</a>
-        <a href="/manager-ui">MANAGER UI</a>
-        <a href="/display_barcodes">BARCODES</a>
-        <br />
+{% extends "layout.html" %}
+
+{% block content %}
+<br />
         <form method="POST" id="the_form">
             <select name="picker">
                 <option value="All">All pickers</option>
@@ -47,27 +33,4 @@
         <input type="button" class="next-prev" value="Next" onclick="next_pg()">
         <input type="button" class="next-prev" value="Prev">
         {% endif %}
-    </div>
-
-    <!--function hit_submit(){-->
-        <!--the_form = document.getElementById("the_form");-->
-        <!--the_form.submit();-->
-    <!--}-->
-
-    <!--function next_pg(){-->
-        <!--var offset = document.getElementById("offset");-->
-        <!--offset.value += parseInt({{ offset["limit"] }});-->
-        <!--hit_submit();-->
-    <!--}-->
-
-    <!--function prev_pg(){-->
-        <!--var offset = document.getElementById("offset");-->
-        <!--offset.value -= int({{ offset["limit"] }});-->
-        <!--if (int(offset.value < 0)){-->
-            <!--offset.value = 0;-->
-        <!--}-->
-        <!--hit_submit();-->
-    <!--}-->
-
-</body>
-</html>
+{% endblock %}

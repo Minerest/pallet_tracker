@@ -1,9 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Picker UI</title>
-    <link href="/static/index.css" rel="stylesheet" type="text/css">
+{% extends "layout.html" %}
+
+{% block head %}
+    {{ super() }}
     <script type="text/javascript">
     function get_the_vals(){
         text_field = document.getElementById("textfield");
@@ -62,19 +60,10 @@
     }
     setInterval(function() { focus_the_box(); }, 125);
     setInterval(function() { wrapper(); }, 250);
-</script>
-</head>
-<body>
-<div class="container">
-<div id="top">
-    <img src="/static/ess.png">
-</div>
+    </script>
+{% endblock %}
 
-    <H1>Welcome to the Picker UI</H1>
-    <a href="/batch-viewer">BATCH VIEWER</a>
-    <a href="/picker-ui">PICKER UI</a>
-    <a href="/manager-ui">MANAGER UI</a>
-    <a href="/display_barcodes">BARCODES</a>
+{% block content %}
     <H2><div id="name-view"></div></H2>
     <H2><div id="batch-view"></div></H2>
     <p>Enter the data:</p>
@@ -96,6 +85,4 @@
             <H1> THE MASTER BATCH SCANNED WAS NEVER INPUT INTO THE DATABASE</H1>
         {% endif %}
     </div>
-</div>
-</body>
-</html>
+{% endblock %}
