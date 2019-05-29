@@ -1,5 +1,38 @@
 {% extends "layout.html" %}
+{% block head %}
 
+    {{ super() }}
+    <script>
+        function next_pg(){
+            var form = document.getElementById("the_form");
+            var total = {{ offset["length"] }};
+            var pg = {{ offset["offset"] }} + 1; // +1 because next page
+            var lim = {{ offset["limit"] }};
+
+            if (pg * lim > total){
+                pg = (total - lim) / lim;
+            }
+            document.getElementById("offset").value = pg * lim;
+            form.submit();
+        }
+
+        function prev_pg(){
+            var form = document.getElementById("the_form");
+            var total = {{ offset["length"] }};
+            var pg = {{ offset["offset"] }} - 1; //  because prev page
+            var lim = {{ offset["limit"] }};
+            if (pg < 0){
+                pg = 0;
+            }
+            document.getElementById("offset").value = pg * lim;
+            form.submit()
+        }
+
+
+
+    </script>
+
+{% endblock %}
 {% block content %}
 <br />
         <form method="POST" id="the_form">
@@ -31,6 +64,6 @@
             {% endfor %}
         </table>
         <input type="button" class="next-prev" value="Next" onclick="next_pg()">
-        <input type="button" class="next-prev" value="Prev">
+        <input type="button" class="next-prev" value="Prev" onclick="prev_pg()">
         {% endif %}
 {% endblock %}

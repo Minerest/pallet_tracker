@@ -4,9 +4,9 @@ from datetime import datetime
 import os
 
 # ================ USER LIBRARIES ===================== #
-import modals
-import barcode_maker
-import gen_utils
+import modals # database stuff
+import barcode_maker # wraper for the py-barcode library
+import gen_utils # general utilities
 
 app = Flask(__name__)
 
@@ -112,7 +112,7 @@ def get_active_pickers():
 
     offset = dict()
     offset["offset"] = 0
-    offset["limit"] = 1
+    offset["limit"] = 40
 
     return render_template("batch_viewer.html", active_pickers=pickers, offset=offset)
 
@@ -121,15 +121,16 @@ def get_active_pickers():
 def see_the_batches():
     offset = dict()
     picker = request.form["picker"]
-    offset["offset"] = request.form["offset"]
-    offset["limit"] = 1
     Session = modals.db.get_session()
+    offset["offset"] = request.form["offset"]
+    offset["limit"] = 10
     if picker == "All":
         entries = Session.query(modals.Picker, modals.Batch, modals.MasterBatch)\
                             .filter(modals.MasterBatch.pickerid == modals.Picker.id)\
                             .filter(modals.Batch.MasterBatch == modals.MasterBatch.id)\
                             .order_by(modals.Batch.date.desc(), modals.Batch.time.desc())\
-                            .limit(500)
+                            .limit(offset["limit"])\
+                            .offset(offset["offset"])
 
     else:
         entries = Session.query(modals.Picker, modals.Batch, modals.MasterBatch)\
@@ -137,7 +138,8 @@ def see_the_batches():
                             .filter(modals.MasterBatch.pickerid == modals.Picker.id)\
                             .filter(modals.Batch.MasterBatch == modals.MasterBatch.id) \
                             .order_by(modals.Batch.date.desc(), modals.Batch.time.desc())\
-                            .limit(500)
+                            .limit(offset["limit"])\
+                            .offset(offset["offset"])
     table_items = []
 
     for picker_entry, batch, master in entries:
@@ -148,6 +150,9 @@ def see_the_batches():
         hour, minute = gen_utils.float_to_time(master.time)
         item["time"] = str(hour) + ":" + str(minute)
         table_items.append(item)
+
+
+    offset["length"] = len(table_items) # this doesn't work because I'm not getting the total amount of rows!
 
     entries = Session.query(modals.Picker.name).distinct()
     pickers = [entry.name for entry in entries]
