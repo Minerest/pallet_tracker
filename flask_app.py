@@ -194,12 +194,8 @@ def get_index(variable=None):
 
 @app.route("/display_barcodes")
 def display_barcodes():
-    wd = "./static/barcodes/barcodes/"
-    barcodes_to_serve = []
-    for file in os.listdir(wd):
-        barcodes_to_serve.append(wd + file)
 
-    return render_template("barcode_viewer.html", barcodes=barcodes_to_serve)
+    return render_template("barcode_viewer.html")
 
 
 @app.route("/display_barcodes", methods=["POST"])

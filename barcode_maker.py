@@ -1,6 +1,7 @@
 import os
 import barcode as b
 import modals
+from barcode.writer import ImageWriter
 
 '''
 Control flow for this file
@@ -20,7 +21,7 @@ def gen(n=None):
             n = "$" + n + "$"
         barcode_object = b.get_barcode_class("code128")
         wd = "./static/barcodes/barcodes/"
-        barcode = barcode_object(str(n))
+        barcode = barcode_object(str(n), writer=ImageWriter())
         barcode.save(wd + str(n))
         return
 
@@ -43,7 +44,7 @@ def gen(n=None):
 
     barcode_object = b.get_barcode_class("code128")
 
-    barcodes_to_print = [barcode_object(str(bcode)) for bcode in batches_to_print]
+    barcodes_to_print = [barcode_object(str(bcode), writer=ImageWriter()) for bcode in batches_to_print]
     for fname, barcode in zip(batches_to_print, barcodes_to_print):
         barcode.save(wd + str(fname))
 
