@@ -125,34 +125,43 @@ def see_the_batches():
     offset["offset"] = request.form["offset"]
     offset["limit"] = 10
     if picker == "All":
-        entries = Session.query(modals.Picker, modals.Batch, modals.MasterBatch)\
-                            .filter(modals.MasterBatch.pickerid == modals.Picker.id)\
-                            .filter(modals.Batch.MasterBatch == modals.MasterBatch.id)\
+        entries = Session.query(modals.MasterBatch, modals.Batch, modals.Picker, modals.DropStation) \
+                         .outerjoin(modals.DropStation, modals.DropStation.pickerid == modals.Picker.id)\
+                         .filter(modals.MasterBatch.pickerid == modals.Picker.id,
+                                    modals.Batch.MasterBatch == modals.MasterBatch.id)\
                             .order_by(modals.Batch.date.desc(), modals.Batch.time.desc())\
-                            .limit(offset["limit"])\
-                            .offset(offset["offset"])
+                            .limit(100)
+                            #.offset(offset["offset"])
+
+        offset["length"] = Session.query(modals.Picker, modals.Batch, modals.MasterBatch)\
+                                  .filter(modals.MasterBatch.pickerid == modals.Picker.id,
+                                          modals.Batch.MasterBatch == modals.MasterBatch.id).count()
 
     else:
-        entries = Session.query(modals.Picker, modals.Batch, modals.MasterBatch)\
-                            .filter(modals.Picker.name == picker)\
-                            .filter(modals.MasterBatch.pickerid == modals.Picker.id)\
-                            .filter(modals.Batch.MasterBatch == modals.MasterBatch.id) \
-                            .order_by(modals.Batch.date.desc(), modals.Batch.time.desc())\
-                            .limit(offset["limit"])\
-                            .offset(offset["offset"])
+        entries = Session.query(modals.Picker, modals.Batch, modals.MasterBatch, modals.DropStation)\
+                         .filter(modals.Picker.name == picker)\
+                         .filter(modals.MasterBatch.pickerid == modals.Picker.id)\
+                         .filter(modals.Batch.MasterBatch == modals.MasterBatch.id) \
+                         .order_by(modals.Batch.date.desc(), modals.Batch.time.desc())\
+                         .limit(offset["limit"])\
+                         .offset(offset["offset"])
+
+        offset["length"] = Session.query(modals.Picker, modals.Batch, modals.MasterBatch)\
+                                  .filter(modals.Picker.name == picker)\
+                                  .filter(modals.MasterBatch.pickerid == modals.Picker.id)\
+                                  .filter(modals.Batch.MasterBatch == modals.MasterBatch.id).count()
     table_items = []
 
-    for picker_entry, batch, master in entries:
+    for entry in entries:
+        print(entry)
         item = dict()
-        item["name"] = picker_entry.name
-        item["batch"] = batch.id
-        item["date"] = master.date
-        hour, minute = gen_utils.float_to_time(master.time)
+        item["name"] = entry[2].name
+        item["batch"] = entry[1].id
+        item["date"] = entry[0].date
+        hour, minute = gen_utils.float_to_time(entry[3].time if entry[3] else entry[1].time)
         item["time"] = str(hour) + ":" + str(minute)
+        item["drop"] = entry[3].station if entry[3] else ""
         table_items.append(item)
-
-
-    offset["length"] = len(table_items) # this doesn't work because I'm not getting the total amount of rows!
 
     entries = Session.query(modals.Picker.name).distinct()
     pickers = [entry.name for entry in entries]

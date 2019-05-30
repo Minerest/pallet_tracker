@@ -6,11 +6,11 @@
         function next_pg(){
             var form = document.getElementById("the_form");
             var total = {{ offset["length"] }};
-            var pg = {{ offset["offset"] }} + 1; // +1 because next page
+            var pg = Math.round(({{ offset["offset"]}} / {{offset["limit"]}})) + 1; // +1 because next page
             var lim = {{ offset["limit"] }};
 
-            if (pg * lim > total){
-                pg = (total - lim) / lim;
+            if (pg * lim > total + lim){
+                pg--;
             }
             document.getElementById("offset").value = pg * lim;
             form.submit();
@@ -19,7 +19,7 @@
         function prev_pg(){
             var form = document.getElementById("the_form");
             var total = {{ offset["length"] }};
-            var pg = {{ offset["offset"] }} - 1; //  because prev page
+            var pg = Math.round(({{ offset["offset"]}} / {{offset["limit"]}})) - 1; //  because prev page
             var lim = {{ offset["limit"] }};
             if (pg < 0){
                 pg = 0;
@@ -28,6 +28,9 @@
             form.submit()
         }
 
+        function zero_out(){
+            document.getElementById("offset").value = 0
+        }
 
 
     </script>
@@ -36,7 +39,7 @@
 {% block content %}
 <br />
         <form method="POST" id="the_form">
-            <select name="picker">
+            <select name="picker" onchange="zero_out()">
                 <option value="All">All pickers</option>
                 {% for picker in active_pickers %}
                 <option value="{{picker}}">{{picker}}</option>
@@ -63,7 +66,9 @@
             </tr>
             {% endfor %}
         </table>
-        <input type="button" class="next-prev" value="Next" onclick="next_pg()">
-        <input type="button" class="next-prev" value="Prev" onclick="prev_pg()">
-        {% endif %}
+        <div class="next-prev-div">
+            <input type="button" class="next-prev" value="Prev" onclick="prev_pg()">
+            <input type="button" class="next-prev" value="Next" onclick="next_pg()">
+        </div>
+    {% endif %}
 {% endblock %}
