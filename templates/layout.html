@@ -8,20 +8,22 @@
     {% endblock %}
 </head>
 <body>
-{% block top %}
-<div id="container">
-    <img src="/static/ess.png">
+<div id="master_block">
+    {% block top %}
+    <div id="container" class="base">
+        <img src="/static/ess.png">
 
-    <H2>RELEVANT LINKS:</H2>
-    <a href="/batch-viewer">BATCH VIEWER</a>
-    <a href="/picker-ui">PICKER UI</a>
-    <a href="/manager-ui">MANAGER UI</a>
-    <a href="/display_barcodes">BARCODES</a>
-</div>
-{% endblock %}
-<div id="content">
-    {% block content %}
+        <H2>RELEVANT LINKS:</H2>
+        <a href="/batch-viewer">BATCH VIEWER</a> |
+        <a href="/picker-ui">PICKER UI</a> |
+        <a href="/manager-ui">MANAGER UI</a> |
+        <a href="/display_barcodes">BARCODES</a>
+    </div>
     {% endblock %}
+    <div id="content" class="base">
+        {% block content %}
+        {% endblock %}
+    </div>
 </div>
 </body>
 </html>

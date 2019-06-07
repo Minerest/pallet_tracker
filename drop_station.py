@@ -26,5 +26,5 @@ class Station:
 
 
 if __name__ == "__main__":
-    test_station = Station("test")
-    test_station.make_the_drop("$EricDiaz$", "$123456792")
+    test_station = Station("Door 37")
+    test_station.make_the_drop("$Fabian$", "$919191919")

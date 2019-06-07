@@ -112,7 +112,7 @@ def get_active_pickers():
 
     offset = dict()
     offset["offset"] = 0
-    offset["limit"] = 40
+    offset["limit"] = 10
 
     return render_template("batch_viewer.html", active_pickers=pickers, offset=offset)
 
@@ -130,15 +130,16 @@ def see_the_batches():
                          .filter(modals.MasterBatch.pickerid == modals.Picker.id,
                                     modals.Batch.MasterBatch == modals.MasterBatch.id)\
                             .order_by(modals.Batch.date.desc(), modals.Batch.time.desc())\
-                            .limit(100)
-                            #.offset(offset["offset"])
+                            .limit(offset["limit"])\
+                            .offset(offset["offset"])
 
         offset["length"] = Session.query(modals.Picker, modals.Batch, modals.MasterBatch)\
                                   .filter(modals.MasterBatch.pickerid == modals.Picker.id,
                                           modals.Batch.MasterBatch == modals.MasterBatch.id).count()
 
     else:
-        entries = Session.query(modals.Picker, modals.Batch, modals.MasterBatch, modals.DropStation)\
+        entries = Session.query(modals.MasterBatch, modals.Batch, modals.Picker, modals.DropStation) \
+                         .outerjoin(modals.DropStation, modals.DropStation.pickerid == modals.Picker.id) \
                          .filter(modals.Picker.name == picker)\
                          .filter(modals.MasterBatch.pickerid == modals.Picker.id)\
                          .filter(modals.Batch.MasterBatch == modals.MasterBatch.id) \
@@ -153,6 +154,7 @@ def see_the_batches():
     table_items = []
 
     for entry in entries:
+        # entry[0] = masterbatch; entry[1] = batch; entry[2] = picker; entry[3] = dropstation
         print(entry)
         item = dict()
         item["name"] = entry[2].name
@@ -160,7 +162,7 @@ def see_the_batches():
         item["date"] = entry[0].date
         hour, minute = gen_utils.float_to_time(entry[3].time if entry[3] else entry[1].time)
         item["time"] = str(hour) + ":" + str(minute)
-        item["drop"] = entry[3].station if entry[3] else ""
+        item["drop"] = entry[3].station if entry[3] else "Currently Picking"
         table_items.append(item)
 
     entries = Session.query(modals.Picker.name).distinct()
@@ -177,13 +179,17 @@ def add_to_drop_station():
 
     dropstation = dict()
     picker = request.form["picker"]
-    picker_id = Session.query(modals.Picker.id)\
+    picker = picker.strip("$")
+    try:
+        picker_id = Session.query(modals.Picker.id)\
                        .filter(modals.Picker.name == picker).one()
+    except:
+        return "Error with the picker"
     dropstation["station"] = request.form["station"]
     dropstation["masterid"] = request.form["masterid"]
     dropstation["date"] = datetime.now()
     dropstation["time"] = gen_utils.time_to_float()
-    dropstation["picker_id"] = picker_id.id
+    dropstation["pickerid"] = picker_id.id
 
     dropstation["masterid"] = dropstation["masterid"].strip("$")
 
@@ -192,13 +198,32 @@ def add_to_drop_station():
     if not b:
         return ""
 
-    db_entry = modals.DropStation(pickerid=dropstation["picker_id"], date=dropstation["date"],
-                                  time=dropstation["time"], station=dropstation["station"],
-                                  masterid=dropstation["masterid"])
-    Session.add(db_entry)
+    entry_exists = bool(Session.query(modals.DropStation)\
+        .filter(modals.DropStation.masterid == dropstation["masterid"]).first())
+    if entry_exists:
+        dropstation["station"] += " OR "
+        item = Session.query(modals.DropStation) \
+            .filter(modals.DropStation.masterid == dropstation["masterid"]).first()
+        s = dropstation["station"] + item.station
+        Session.query(modals.DropStation) \
+                .filter(modals.DropStation.masterid == dropstation["masterid"]).update({
+                                                                                        "station": s,
+                                                                                        "time": dropstation["time"]})
+
+    else:
+        db_entry = modals.DropStation(pickerid=dropstation["pickerid"], date=dropstation["date"],
+                                      time=dropstation["time"], station=dropstation["station"],
+                                      masterid=dropstation["masterid"])
+        Session.add(db_entry)
+
     Session.commit()
     Session.close()
     return ""
+
+
+@app.route("/drop")
+def drop_test():
+    return render_template("drop_station.html")
 
 @app.route('/')
 @app.route('/<variable>')

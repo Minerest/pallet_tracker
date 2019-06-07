@@ -38,7 +38,11 @@ def gen(n=None):
     amt = n if n else 10
     amt = 20 if amt >= 100 else amt
     last_entry = session.query(modals.MasterBatch).order_by(modals.MasterBatch.id.desc()).first()
-
+    if last_entry is None:
+        last_entry = modals.MasterBatch()
+        last_entry.id = 99999999
+        session.add(last_entry)
+        session.commit()
     batches_to_print = [ "$" + str(batch_id) for batch_id in range(last_entry.id + 1, last_entry.id + amt + 1)]
     session.close()
 

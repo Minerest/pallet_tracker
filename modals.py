@@ -10,7 +10,7 @@ SQLITE = 'sqlite'
 Base = declarative_base()
 engine = create_engine('sqlite:////sqlite3/batches.db', echo=False)
 metadata = MetaData()
-metadata.reflect(bind=engine)
+
 
 
 class SqlLitedb:

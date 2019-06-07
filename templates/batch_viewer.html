@@ -70,5 +70,10 @@
             <input type="button" class="next-prev" value="Prev" onclick="prev_pg()">
             <input type="button" class="next-prev" value="Next" onclick="next_pg()">
         </div>
+    {% else %}
+        <script>
+            zero_out();
+            document.getElementById("the_form").submit();
+        </script>
     {% endif %}
 {% endblock %}
