@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <h1>Test for the Drop Station</h1>
+    <form method="post" action="/drop_station">
+        <p>station: </p><input type="text" placeholder="Enter the drop station" id="station" name="station" /> <br />
+        <p>master_batch: </p><input type="text" placeholder="Enter the Master Batch" id="master_batch" name="masterid" /><br />
+        <p>picker_name: </p><input type="text" placeholder="Enter the picker name" id="picker_name" name="picker" /><br /><br />
+
+        <button type="submit" value="submit">Submit</button>
+    </form>
+
+{% endblock %}
