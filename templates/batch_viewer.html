@@ -51,11 +51,13 @@
 
         {% if items %}
         <table>
-            <th>Name</th>
-            <th>Batch</th>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Drop Station</th>
+            <tr>
+                <th>Name</th>
+                <th>Batch</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Drop Station</th>
+            </tr>
             {% for item in items %}
             <tr>
                 <td>{{ item["name"] }}</td>

@@ -4,6 +4,7 @@ import modals
 
 # utility library to perform calculations
 
+
 def float_to_time(time_val):
     hour = int(float(time_val))
     time_str = str(time_val)

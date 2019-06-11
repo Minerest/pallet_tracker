@@ -155,7 +155,6 @@ def see_the_batches():
 
     for entry in entries:
         # entry[0] = masterbatch; entry[1] = batch; entry[2] = picker; entry[3] = dropstation
-        print(entry)
         item = dict()
         item["name"] = entry[2].name
         item["batch"] = entry[1].id

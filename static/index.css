@@ -6,7 +6,9 @@ body{
     height: 100%;
     width: 100%;
     /*background: linear-gradient(to top right, #99DAF0, #99d6ff);*/
-    background-color: #005ce6;
+    /* background-color: #005ce6;*/
+    /*background-color: #004e68;*/
+    background-color: #99DAF0
 
 }
 
@@ -14,10 +16,12 @@ body{
     position: relative;
     width: 50%;
     height: 90%;
+    height: 90vh;
     padding-left: 10%;
     padding-right: 10%;
     padding-top: 2%;
-    background-color: #99DAF0;
+    /*background-color: #99DAF0;*/
+    /*background-color: #ffffff;*/
     border-radius: 10%;
     margin-left: 15%;
 
