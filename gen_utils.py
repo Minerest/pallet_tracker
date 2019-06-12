@@ -1,6 +1,8 @@
 from datetime import datetime
-from sqlalchemy import exists
+from sqlalchemy import exists, and_
 import modals
+import csv
+import calendar # for last day of the month
 
 # utility library to perform calculations
 
@@ -51,7 +53,21 @@ def add_multiple_batch_entries(batch, Session, master_batch):
     Session.commit()
 
 
-
+def make_csv():
+    ''' Gets a list of batches from the data base and creates a csv file for the excel web scraper to read into '''
+    today = datetime.now()
+    Session = modals.db.get_session()
+    active_batches = Session.query(modals.Batch).filter(modals.Batch.date == datetime.date(today))
+    with open('daily_batches.csv', 'w') as batch_file:
+        writer = csv.writer(batch_file)
+        data = []
+        data.append([])
+        j = 0
+        for i in active_batches:
+            data[j].append(i.id)
+            j += 1
+            data.append([])
+        writer.writerows(data)
 
 if __name__ == "__main__":
     hour = datetime.now().hour
@@ -59,3 +75,4 @@ if __name__ == "__main__":
     h, m = float_to_time(str(time_to_float()))
     assert(h == hour)
     assert(m == minute)
+    make_csv()
