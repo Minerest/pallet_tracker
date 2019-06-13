@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+
+
+{% block content %}
+
+    <table>
+        <tr>
+            <th>Carton ID</th>
+            <th>Order Number</th>
+            <th>Route</th>
+            <th>Description</th>
+            <th>Sku</th>
+            <th>Picked?</th>
+            <th>By who</th>
+        </tr>
+        {% for item in items %}
+        <tr>
+            <td>{{ item["suborder_id"]}}</td>
+            <td>{{ item["sales_id"]}}</td>
+            <td>{{ item["route"]}}</td>
+            <td>{{ item["desc"] }}</td>
+            <td>{{ item["sku"]}}</td>
+            <td>{{ item["status"]}}</td>
+            <td>{{ item["user_id"]}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+
+{% endblock %}
