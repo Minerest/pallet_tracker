@@ -65,6 +65,19 @@ class DropStation(Base):
     station = Column(String)
 
 
+class Dematic(Base):
+    __tablename__ = "Dematic"
+    id = Column(Integer, autoincrement=True, primary_key=True)
+    work_id = Column(String) # BATCH
+    suborder_id = Column(String) # Carton ID
+    sales_id = Column(String) # Order Number
+    route = Column(String)
+    desc = Column(String)
+    sku = Column(String)
+    status = Column(String)
+    user_id = Column(String)
+
+
 db = SqlLitedb()
 
 
