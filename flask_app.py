@@ -128,7 +128,7 @@ def see_the_batches():
         entries = Session.query(modals.MasterBatch, modals.Batch, modals.Picker, modals.DropStation) \
                          .outerjoin(modals.DropStation, modals.DropStation.pickerid == modals.Picker.id)\
                          .filter(modals.MasterBatch.pickerid == modals.Picker.id,
-                                    modals.Batch.MasterBatch == modals.MasterBatch.id)\
+                                 modals.Batch.MasterBatch == modals.MasterBatch.id)\
                             .order_by(modals.Batch.date.desc(), modals.Batch.time.desc())\
                             .limit(offset["limit"])\
                             .offset(offset["offset"])
@@ -162,6 +162,13 @@ def see_the_batches():
         hour, minute = gen_utils.float_to_time(entry[3].time if entry[3] else entry[1].time)
         item["time"] = str(hour) + ":" + str(minute)
         item["drop"] = entry[3].station if entry[3] else "Currently Picking"
+        if entry[3]:
+            item["drop"] = entry[3].station
+        elif item["name"] == "Not Assigned":
+            item["drop"] = ""
+        else:
+            item["drop"] = "Currently Picking"
+
         table_items.append(item)
 
     entries = Session.query(modals.Picker.name).distinct()
@@ -170,6 +177,23 @@ def see_the_batches():
     Session.close()
     return render_template("batch_viewer.html", items=table_items, active_pickers=pickers, offset=offset)
 
+
+@app.route("/cartons")
+def display_the_cartons():
+
+    batch = request.args.get("batch", None)
+    if not batch:
+        return render_template("batch_viewer.html")
+    session = modals.db.get_session()
+    entries = session.query(modals.Dematic).filter(modals.Dematic.work_id == batch)\
+        .order_by(modals.Dematic.sales_id.desc())
+
+    items = []
+    for entry in entries:
+        item = entry.__dict__
+        items.append(item)
+    session.close()
+    return render_template("cartons.html", items=items)
 
 @app.route("/drop_station", methods=["POST"])
 def add_to_drop_station():
@@ -189,13 +213,12 @@ def add_to_drop_station():
     dropstation["date"] = datetime.now()
     dropstation["time"] = gen_utils.time_to_float()
     dropstation["pickerid"] = picker_id.id
-
     dropstation["masterid"] = dropstation["masterid"].strip("$")
 
     b = Session.query(modals.MasterBatch).filter(modals.MasterBatch.id == dropstation["masterid"]).scalar()
 
     if not b:
-        return ""
+        return "Error with the master batch"
 
     entry_exists = bool(Session.query(modals.DropStation)\
         .filter(modals.DropStation.masterid == dropstation["masterid"]).first())

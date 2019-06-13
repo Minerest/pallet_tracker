@@ -61,7 +61,7 @@
             {% for item in items %}
             <tr>
                 <td>{{ item["name"] }}</td>
-                <td>{{ item["batch"] }}</td>
+                <td><a href="/cartons?batch={{ item['batch'] }}">{{ item["batch"] }}</a></td>
                 <td>{{ item["date"] }}</td>
                 <td>{{ item["time"] }}</td>
                 <td> {{ item["drop"] }}</td>

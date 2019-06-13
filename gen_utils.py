@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import exists, and_
+from sqlalchemy import exists
 import modals
 import csv
 import calendar # for last day of the month
@@ -96,7 +96,7 @@ def process_csv_row(row):
     status = True if row[6] == "Picked" else False
     user = row[7]
     entry = modals.Dematic(work_id=batch, suborder_id=carton_id, sales_id=order, route=route,
-                               desc=desc, sku=sku, status=status, user_id=user)
+                           desc=desc, sku=sku, status=status, user_id=user)
     return entry
 
 
