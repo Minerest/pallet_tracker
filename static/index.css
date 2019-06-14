@@ -102,6 +102,15 @@ td {
 
 }
 
+.route_links {
+    font-size: 25px;
+    margin-top: 10px;
+}
+
+.selected {
+    background-color: #7ad1f3;
+}
+
 #master-view {
     height: 50 px;
     width: 150 px;

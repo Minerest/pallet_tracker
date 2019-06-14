@@ -1,8 +1,22 @@
 {% extends "layout.html" %}
+{% block head %}
+    {{super()}}
+    <script>
+        func change_the_row(){
 
+
+        }
+
+
+    </script>
+{% endblock %}
 
 {% block content %}
-
+    <div class="route_links">
+        {% for route in routes %}
+        <a href="#{{route}}">{{route}}</a> |
+        {% endfor %}
+    </div>
     <table>
         <tr>
             <th>Carton ID</th>
@@ -17,7 +31,7 @@
         <tr>
             <td>{{ item["suborder_id"]}}</td>
             <td>{{ item["sales_id"]}}</td>
-            <td>{{ item["route"]}}</td>
+            <td id="{{item['route']}}">{{ item["route"]}}</td>
             <td>{{ item["desc"] }}</td>
             <td>{{ item["sku"]}}</td>
             <td>{{ item["status"]}}</td>

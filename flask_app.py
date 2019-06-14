@@ -186,14 +186,19 @@ def display_the_cartons():
         return render_template("batch_viewer.html")
     session = modals.db.get_session()
     entries = session.query(modals.Dematic).filter(modals.Dematic.work_id == batch)\
-        .order_by(modals.Dematic.sales_id.desc())
+        .order_by(modals.Dematic.route.desc(), modals.Dematic.sales_id.desc())
 
     items = []
+    routes = []
+    cur_route = ""
     for entry in entries:
         item = entry.__dict__
+        if cur_route != entry.route:
+            routes.append(entry.route)
+            cur_route = entry.route
         items.append(item)
     session.close()
-    return render_template("cartons.html", items=items)
+    return render_template("cartons.html", items=items, routes=routes)
 
 @app.route("/drop_station", methods=["POST"])
 def add_to_drop_station():
