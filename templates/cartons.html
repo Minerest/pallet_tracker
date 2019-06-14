@@ -2,19 +2,29 @@
 {% block head %}
     {{super()}}
     <script>
-        func change_the_row(){
-
-
+        function color_me_silly(r){
+            var dark_ones = document.getElementsByClassName("color_me");
+            if(dark_ones){
+                var length_of = dark_ones.length;
+                console.log("LENGTH" + length_of);
+                for (var i = 0; i < length_of; i++){
+                    console.log(i);
+                    dark_ones[0].classList.remove("color_me");
+                }
+            }
+            var to_color = document.getElementsByClassName(r)
+            length_of = to_color.length;
+            for (var i = 0; i < length_of; i++){
+                to_color[i].classList.add("color_me");
+            }
         }
-
-
     </script>
 {% endblock %}
 
 {% block content %}
     <div class="route_links">
         {% for route in routes %}
-        <a href="#{{route}}">{{route}}</a> |
+        <a href="#{{route}}" onclick="color_me_silly('{{route}}')">{{route}}</a> |
         {% endfor %}
     </div>
     <table>
@@ -28,13 +38,18 @@
             <th>By who</th>
         </tr>
         {% for item in items %}
-        <tr>
+        <tr class="{{item['route']}}">
             <td>{{ item["suborder_id"]}}</td>
             <td>{{ item["sales_id"]}}</td>
             <td id="{{item['route']}}">{{ item["route"]}}</td>
             <td>{{ item["desc"] }}</td>
             <td>{{ item["sku"]}}</td>
-            <td>{{ item["status"]}}</td>
+            <td> {% if item["status"] == "1" %}
+                    Yes
+                {% else %}
+                    No
+                {% endif %}
+            </td>
             <td>{{ item["user_id"]}}</td>
         </tr>
         {% endfor %}

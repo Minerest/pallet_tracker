@@ -119,4 +119,5 @@ if __name__ == "__main__":
     h, m = float_to_time(str(time_to_float()))
     assert(h == hour)
     assert(m == minute)
+    make_csv()
     import_csv_to_db()

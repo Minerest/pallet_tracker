@@ -126,7 +126,7 @@ def see_the_batches():
     offset["limit"] = 10
     if picker == "All":
         entries = Session.query(modals.MasterBatch, modals.Batch, modals.Picker, modals.DropStation) \
-                         .outerjoin(modals.DropStation, modals.DropStation.pickerid == modals.Picker.id)\
+                         .outerjoin(modals.DropStation, modals.DropStation.masterid == modals.MasterBatch.id)\
                          .filter(modals.MasterBatch.pickerid == modals.Picker.id,
                                  modals.Batch.MasterBatch == modals.MasterBatch.id)\
                             .order_by(modals.Batch.date.desc(), modals.Batch.time.desc())\

@@ -3,7 +3,7 @@
 
     {{ super() }}
     <script>
-        function next_pg(){
+    function next_pg(){
             var form = document.getElementById("the_form");
             var total = {{ offset["length"] }};
             var pg = Math.round(({{ offset["offset"]}} / {{offset["limit"]}})) + 1; // +1 because next page
@@ -31,10 +31,7 @@
         function zero_out(){
             document.getElementById("offset").value = 0
         }
-
-
     </script>
-
 {% endblock %}
 {% block content %}
 <br />
@@ -79,3 +76,4 @@
         </script>
     {% endif %}
 {% endblock %}
+
