@@ -58,6 +58,7 @@ th {
 }
 tr:hover td {
     background-color: #DFEBF1;
+    color: black;
 }
 td {
 
@@ -123,6 +124,6 @@ td {
 
 }
 
-.color_me:td {
-    color: black;
+.color_me > td {
+    background-color: #5eb8d6;
 }

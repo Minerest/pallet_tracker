@@ -206,19 +206,18 @@ def add_to_drop_station():
     Session = modals.db.get_session()
 
     dropstation = dict()
-    picker = request.form["picker"]
-    picker = picker.strip("$")
+    dropstation["masterid"] = request.form["masterid"]
+    dropstation["masterid"] = dropstation["masterid"].strip("$")
     try:
-        picker_id = Session.query(modals.Picker.id)\
-                       .filter(modals.Picker.name == picker).one()
+        name = Session.query(modals.Picker).filter(modals.MasterBatch.id == dropstation["masterid"],
+                                                   modals.MasterBatch.pickerid == modals.Picker.id).first()
     except:
         return "Error with the picker"
     dropstation["station"] = request.form["station"]
     dropstation["masterid"] = request.form["masterid"]
     dropstation["date"] = datetime.now()
     dropstation["time"] = gen_utils.time_to_float()
-    dropstation["pickerid"] = picker_id.id
-    dropstation["masterid"] = dropstation["masterid"].strip("$")
+    dropstation["pickerid"] = name.id
 
     b = Session.query(modals.MasterBatch).filter(modals.MasterBatch.id == dropstation["masterid"]).scalar()
 
@@ -226,7 +225,7 @@ def add_to_drop_station():
         return "Error with the master batch"
 
     entry_exists = bool(Session.query(modals.DropStation)\
-        .filter(modals.DropStation.masterid == dropstation["masterid"]).first())
+                               .filter(modals.DropStation.masterid == dropstation["masterid"]).first())
     if entry_exists:
         dropstation["station"] += " OR "
         item = Session.query(modals.DropStation) \
