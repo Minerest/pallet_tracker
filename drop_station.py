@@ -14,10 +14,11 @@ class Station:
                                                    modals.MasterBatch.pickerid == modals.Picker.id)
         post_req = {
             "station": self.station,
-            "picker": name,
+            "picker": name.id,
             "masterid": master_batch
         }
         r = requests.post(url=self.url, data=post_req)
+        Session.close()
         if r.status_code >= 300:
             print(r.status_code)
             print(self.url)

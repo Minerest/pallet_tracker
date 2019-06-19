@@ -35,6 +35,20 @@
 {% endblock %}
 {% block content %}
 <br />
+        <div id="search_div">
+            <form method="GET" id="search_by" action="/search_by">
+                    <input type="text" placeholder="Search Here!" name="data"/>
+                    <input type="submit" class="radio_button" value="Search!" id="search_submit">
+                <div class="radio_div">
+                    <fieldset id="radios">
+                        <p>Carton ID</p><input type="radio" class="radio_button" value="carton" name="items" />
+                        <p>| batch </p><input type="radio" class="radio_button"  name="items" value="batch" />
+                        <p>| Order Number </p><input type="radio" class="radio_button" checked="true" name="items" value="order" />
+                    </fieldset>
+                </div>
+            </form>
+        </div>
+
         <form method="POST" id="the_form">
             <select name="picker" onchange="zero_out()">
                 <option value="All">All pickers</option>

@@ -49,10 +49,11 @@ def add_multiple_batch_entries(batch, session, master_batch):
 
     session.bulk_save_objects(bulk_entries)
     session.commit()
+    session.close
 
 
 def make_csv():
-    ''' Gets a list of batches from the data base and creates a csv file for the excel web scraper to read into '''
+    ''' Gets a list of batches from the data base and creates a csv file for the excel web scraper to read from '''
     today = datetime.now()
     session = modals.db.get_session()
     active_batches = session.query(modals.Batch).filter(modals.Batch.date == datetime.date(today))
@@ -69,6 +70,7 @@ def make_csv():
 
 
 def import_csv_to_db():
+    session = modals.db.get_session()
     with open("pd_export.csv") as csv_file:
         reader = csv.reader(csv_file)
         b = True
@@ -77,17 +79,20 @@ def import_csv_to_db():
             if b:  # skip header
                 b = False
                 continue
-            entry = process_csv_row(row)
+            entry = process_csv_row(row, session)
+            if not entry:
+                continue  # entry updated and not needed to be added to the list
             entries.append(entry)
 
-    session = modals.db.get_session()
     session.bulk_save_objects(entries)
     session.commit()
     session.close()
 
 
-def process_csv_row(row):
+def process_csv_row(row, session):
     batch = row[0][-6:-1]
+    if int(batch) < 9000:  # filter out the shelf
+        return None
     carton_id = row[1]
     order = row[2][0:7]
     route = process_route(row[3])
@@ -95,8 +100,18 @@ def process_csv_row(row):
     sku = row[5]
     status = True if row[6] == "Picked" else False
     user = row[7]
-    entry = modals.Dematic(work_id=batch, suborder_id=carton_id, sales_id=order, route=route,
+
+    # Check if the entry already exists.
+
+    entry = session.query(modals.Dematic).filter(modals.Dematic.suborder_id == carton_id).one_or_none()
+    if not entry:
+        entry = modals.Dematic(work_id=batch, suborder_id=carton_id, sales_id=order, route=route,
                            desc=desc, sku=sku, status=status, user_id=user)
+    else:
+        session.query(modals.Dematic).filter(modals.Dematic.suborder_id == carton_id).update({
+            "work_id": batch, "suborder_id": carton_id, "sales_id": order, "route": route,
+            "desc": desc, "sku": sku, "status": status, "user_id": user})
+        entry = None
     return entry
 
 

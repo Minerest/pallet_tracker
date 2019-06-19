@@ -7,6 +7,7 @@ import os
 import modals # database stuff
 import barcode_maker # wraper for the py-barcode library
 import gen_utils # general utilities
+import search_funcs
 
 app = Flask(__name__)
 
@@ -232,7 +233,7 @@ def add_to_drop_station():
             .filter(modals.DropStation.masterid == dropstation["masterid"]).first()
         s = dropstation["station"] + item.station
         Session.query(modals.DropStation) \
-                .filter(modals.DropStation.masterid == dropstation["masterid"]).update({
+                    .filter(modals.DropStation.masterid == dropstation["masterid"]).update({
                                                                                         "station": s,
                                                                                         "time": dropstation["time"]})
 
@@ -314,6 +315,27 @@ def get_batches_in_dropstation():
 
     pd = picker.__dict__
     return render_template("locations.html", locations=arr, picker=pd)
+
+
+@app.route("/search_by", methods=["GET"])
+def search_by():
+
+    search_type = request.args.get("items")
+    data = request.args.get("data", None)
+    if not data:
+        return render_template("index.html")
+    session = modals.db.get_session()
+    if search_type == "carton":
+        data = search_funcs.search_by_carton_id(data, session)
+    elif search_type == "batch":
+        data = search_funcs.search_by_batch(data, session)
+    elif search_type == "order":
+        data = search_funcs.search_by_order(data, session)
+    else:
+        session.close()
+        return render_template("index.html")
+    session.close()
+    return render_template("cartons.html", items=data)
 
 
 if __name__ == '__main__':

@@ -68,6 +68,24 @@ td {
     background-color: #ffffff;
 }
 
+#search_div {
+    position: relative;
+    height: 120px;
+    width: 100%;
+    display: inline-block;
+
+
+}
+
+.radio_div p {
+    display: inline;
+}
+
+.radio_div {
+    position: relative;
+    margin: 20px 20px 20px 0px;
+}
+
 
 .next-prev-div {
     position: relative;
