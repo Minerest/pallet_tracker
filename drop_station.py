@@ -1,6 +1,7 @@
 import requests
 import modals
 
+
 class Station:
 
     def __init__(self, station):

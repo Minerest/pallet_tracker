@@ -12,7 +12,6 @@ import search_funcs
 app = Flask(__name__)
 
 
-
 @app.route("/manager-ui")
 def manager_ui():
     return render_template('manager_interface.html')
