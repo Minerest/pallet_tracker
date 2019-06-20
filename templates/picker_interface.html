@@ -57,7 +57,21 @@
         if (v == "submit"){
             get_the_vals();
         }
+        if (v == "clear"){
+            clear_all();
+            return;
+        }
+
     }
+
+     function clear_all(){
+        document.getElementById("name-view").innerHTML = "";
+        document.getElementById("batch-view").innerHTML = "";
+        document.getElementById("form-name").value = "";
+        document.getElementById("form-batch").value = "";
+
+    }
+
     setInterval(function() { focus_the_box(); }, 125);
     setInterval(function() { wrapper(); }, 250);
     </script>

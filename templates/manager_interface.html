@@ -55,6 +55,11 @@
         text_field = document.getElementById("textfield");
         val = text_field.value;
 
+        if (val == "clear"){
+            clear_all();
+            return
+        }
+
         // condition for batch
         if (val.length == 5 && !isNaN(val)){
             get_the_vals();
@@ -69,6 +74,14 @@
             return;
 
         }
+
+    }
+
+    function clear_all(){
+        document.getElementById("master-view").innerHTML = "";
+        document.getElementById("batch-view").innerHTML = "";
+        document.getElementById("form-master").value = "";
+        document.getElementById("form-batch").value = "";
 
     }
 
