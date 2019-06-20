@@ -91,8 +91,6 @@ def import_csv_to_db():
 
 def process_csv_row(row, session):
     batch = row[0][-6:-1]
-    if int(batch) < 9000:  # filter out the shelf
-        return None
     carton_id = row[1]
     order = row[2][0:7]
     route = process_route(row[3])

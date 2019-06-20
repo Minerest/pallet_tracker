@@ -163,7 +163,7 @@ def see_the_batches():
         hour, minute = gen_utils.float_to_time(entry[3].time if entry[3] else entry[1].time)
         item["time"] = str(hour) + ":" + str(minute)
         item["drop"] = entry[3].station if entry[3] else "Currently Picking"
-        if entry[3]:
+        if entry[3] and entry[3].masterid == entry[0].id:
             item["drop"] = entry[3].station
         elif item["name"] == "Not Assigned":
             item["drop"] = ""
@@ -173,7 +173,7 @@ def see_the_batches():
         table_items.append(item)
 
     entries = Session.query(modals.Picker.name).distinct()
-    pickers = [entry.name for entry in entries]
+    pickers = [entry.name for entry in entries if entry.name != "Not Assigned"]
     Session.commit()
     Session.close()
     return render_template("batch_viewer.html", items=table_items, active_pickers=pickers, offset=offset)
@@ -310,8 +310,8 @@ def get_batches_in_dropstation():
     arr = [loc.__dict__ for loc in locations]
 
     for item in arr:
-        hr, min = gen_utils.float_to_time(item["time"])
-        item["time"] = str(hr) + ":" + str(min)
+        hr, minutes = gen_utils.float_to_time(item["time"])
+        item["time"] = str(hr) + ":" + str(minutes)
 
     pd = picker.__dict__
     return render_template("locations.html", locations=arr, picker=pd)
@@ -322,15 +322,22 @@ def search_by():
 
     search_type = request.args.get("items")
     data = request.args.get("data", None)
+    data = data.upper()
     if not data:
         return render_template("index.html")
     session = modals.db.get_session()
     if search_type == "carton":
         data = search_funcs.search_by_carton_id(data, session)
+
     elif search_type == "batch":
         data = search_funcs.search_by_batch(data, session)
+
     elif search_type == "order":
         data = search_funcs.search_by_order(data, session)
+
+    elif search_type == "route":
+        data = search_funcs.search_by_route(data, session)
+
     else:
         session.close()
         return render_template("index.html")

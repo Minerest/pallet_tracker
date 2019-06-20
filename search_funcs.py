@@ -22,5 +22,5 @@ def search_by_route(route, session):
 
 def search_by_carton_id(carton, session):
 
-    entries = session.query(modals.Dematic).filter(modals.Dematic.suborder_id == carton).all()
+    entries = session.query(modals.Dematic).filter(modals.Dematic.suborder_id == carton + " ").all()
     return entries
