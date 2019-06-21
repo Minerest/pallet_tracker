@@ -125,12 +125,12 @@ def see_the_batches():
     offset["offset"] = request.form["offset"]
     offset["limit"] = 10
     if picker == "All":
-        entries = Session.query(modals.MasterBatch, modals.Batch, modals.Picker, modals.DropStation) \
+        n = Session.query(modals.MasterBatch, modals.Batch, modals.Picker, modals.DropStation) \
                          .outerjoin(modals.DropStation, modals.DropStation.masterid == modals.MasterBatch.id)\
                          .filter(modals.MasterBatch.pickerid == modals.Picker.id,
                                  modals.Batch.MasterBatch == modals.MasterBatch.id)\
                             .order_by(modals.Batch.date.desc(), modals.Batch.time.desc())\
-                            .limit(offset["limit"])\
+                            .limit(100)\
                             .offset(offset["offset"])
 
         offset["length"] = Session.query(modals.Picker, modals.Batch, modals.MasterBatch)\
@@ -138,14 +138,20 @@ def see_the_batches():
                                           modals.Batch.MasterBatch == modals.MasterBatch.id).count()
 
     else:
+        # entries = Session.query(modals.MasterBatch, modals.Batch, modals.Picker, modals.DropStation) \
+        #                  .outerjoin(modals.DropStation, modals.DropStation.pickerid == modals.Picker.id) \
+        #                  .filter(modals.Picker.name == picker)\
+        #                  .filter(modals.MasterBatch.pickerid == modals.Picker.id)\
+        #                  .filter(modals.Batch.MasterBatch == modals.MasterBatch.id) \
+        #                  .order_by(modals.Batch.date.desc(), modals.Batch.time.desc())\
+        #                  .limit(offset["limit"])\
+        #                  .offset(offset["offset"])
         entries = Session.query(modals.MasterBatch, modals.Batch, modals.Picker, modals.DropStation) \
-                         .outerjoin(modals.DropStation, modals.DropStation.pickerid == modals.Picker.id) \
-                         .filter(modals.Picker.name == picker)\
-                         .filter(modals.MasterBatch.pickerid == modals.Picker.id)\
-                         .filter(modals.Batch.MasterBatch == modals.MasterBatch.id) \
-                         .order_by(modals.Batch.date.desc(), modals.Batch.time.desc())\
-                         .limit(offset["limit"])\
-                         .offset(offset["offset"])
+            .filter(modals.Picker.name == picker) \
+            .filter(modals.MasterBatch.pickerid == modals.Picker.id) \
+            .filter(modals.Batch.MasterBatch == modals.MasterBatch.id)
+        n = entries.join(modals.DropStation, modals.DropStation.masterid == modals.MasterBatch.id, isouter=True)\
+                                  .order_by(modals.Batch.date.desc(), modals.Batch.time.desc())
 
         offset["length"] = Session.query(modals.Picker, modals.Batch, modals.MasterBatch)\
                                   .filter(modals.Picker.name == picker)\
@@ -153,7 +159,7 @@ def see_the_batches():
                                   .filter(modals.Batch.MasterBatch == modals.MasterBatch.id).count()
     table_items = []
 
-    for entry in entries:
+    for entry in n:
         # entry[0] = masterbatch; entry[1] = batch; entry[2] = picker; entry[3] = dropstation
         item = dict()
         item["name"] = entry[2].name

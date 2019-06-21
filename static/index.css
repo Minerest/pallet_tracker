@@ -154,7 +154,7 @@ td {
 
 @keyframes slidein {
   from {
-    margin-left: 100%;
+    margin-left: 120%;
     width: 300%;
   }
 
