@@ -212,9 +212,9 @@ def add_to_drop_station():
         name = Session.query(modals.Picker).filter(modals.MasterBatch.id == dropstation["masterid"],
                                                    modals.MasterBatch.pickerid == modals.Picker.id).first()
     except:
+        Session.close()
         return "Error with the picker"
     dropstation["station"] = request.form["station"]
-    dropstation["masterid"] = request.form["masterid"]
     dropstation["date"] = datetime.now()
     dropstation["time"] = gen_utils.time_to_float()
     dropstation["pickerid"] = name.id
