@@ -4,9 +4,9 @@ from datetime import datetime
 import os
 
 # ================ USER LIBRARIES ===================== #
-import modals # database stuff
-import barcode_maker # wraper for the py-barcode library
-import gen_utils # general utilities
+import modals  # database stuff
+import barcode_maker  # wraper for the py-barcode library
+import gen_utils  # general utilities
 import search_funcs
 
 app = Flask(__name__)
@@ -38,7 +38,6 @@ def enter_master_batch():
         Session.add(master_batch_entry)
         Session.commit()
 
-
     if "," in batch:
         gen_utils.add_multiple_batch_entries(batch, Session, master_batch)
     else:
@@ -68,9 +67,9 @@ def get_data():
     picker_name = request.form['picker_name']
     master_batch = request.form['master_batch']
     try:
-        assert(master_batch[0] == "$")
-        assert(picker_name[0] == "$")
-        assert(picker_name[-1] == "$")
+        assert (master_batch[0] == "$")
+        assert (picker_name[0] == "$")
+        assert (picker_name[-1] == "$")
         picker_name = picker_name.strip("$")
         master_batch = master_batch.strip("$")
         _ = int(master_batch)
@@ -126,44 +125,36 @@ def see_the_batches():
     offset["limit"] = 10
     if picker == "All":
         n = Session.query(modals.MasterBatch, modals.Batch, modals.Picker, modals.DropStation) \
-                         .outerjoin(modals.DropStation, modals.DropStation.masterid == modals.MasterBatch.id)\
-                         .filter(modals.MasterBatch.pickerid == modals.Picker.id,
-                                 modals.Batch.MasterBatch == modals.MasterBatch.id)\
-                            .order_by(modals.Batch.date.desc(), modals.Batch.time.desc())\
-                            .limit(100)\
-                            .offset(offset["offset"])
+            .outerjoin(modals.DropStation, modals.DropStation.masterid == modals.MasterBatch.id) \
+            .filter(modals.MasterBatch.pickerid == modals.Picker.id,
+                    modals.Batch.MasterBatch == modals.MasterBatch.id) \
+            .order_by(modals.Batch.date.desc(), modals.Batch.time.desc()) \
+            .limit(100) \
+            .offset(offset["offset"])
 
-        offset["length"] = Session.query(modals.Picker, modals.Batch, modals.MasterBatch)\
-                                  .filter(modals.MasterBatch.pickerid == modals.Picker.id,
-                                          modals.Batch.MasterBatch == modals.MasterBatch.id).count()
+        offset["length"] = Session.query(modals.Picker, modals.Batch, modals.MasterBatch) \
+            .filter(modals.MasterBatch.pickerid == modals.Picker.id,
+                    modals.Batch.MasterBatch == modals.MasterBatch.id).count()
 
     else:
-        # entries = Session.query(modals.MasterBatch, modals.Batch, modals.Picker, modals.DropStation) \
-        #                  .outerjoin(modals.DropStation, modals.DropStation.pickerid == modals.Picker.id) \
-        #                  .filter(modals.Picker.name == picker)\
-        #                  .filter(modals.MasterBatch.pickerid == modals.Picker.id)\
-        #                  .filter(modals.Batch.MasterBatch == modals.MasterBatch.id) \
-        #                  .order_by(modals.Batch.date.desc(), modals.Batch.time.desc())\
-        #                  .limit(offset["limit"])\
-        #                  .offset(offset["offset"])
         entries = Session.query(modals.MasterBatch, modals.Batch, modals.Picker, modals.DropStation) \
             .filter(modals.Picker.name == picker) \
             .filter(modals.MasterBatch.pickerid == modals.Picker.id) \
             .filter(modals.Batch.MasterBatch == modals.MasterBatch.id)
-        n = entries.join(modals.DropStation, modals.DropStation.masterid == modals.MasterBatch.id, isouter=True)\
-                                  .order_by(modals.Batch.date.desc(), modals.Batch.time.desc())
+        n = entries.join(modals.DropStation, modals.DropStation.masterid == modals.MasterBatch.id, isouter=True) \
+            .order_by(modals.Batch.date.desc(), modals.Batch.time.desc())
 
-        offset["length"] = Session.query(modals.Picker, modals.Batch, modals.MasterBatch)\
-                                  .filter(modals.Picker.name == picker)\
-                                  .filter(modals.MasterBatch.pickerid == modals.Picker.id)\
-                                  .filter(modals.Batch.MasterBatch == modals.MasterBatch.id).count()
+        offset["length"] = Session.query(modals.Picker, modals.Batch, modals.MasterBatch) \
+            .filter(modals.Picker.name == picker) \
+            .filter(modals.MasterBatch.pickerid == modals.Picker.id) \
+            .filter(modals.Batch.MasterBatch == modals.MasterBatch.id).count()
     table_items = []
 
     for entry in n:
         # entry[0] = masterbatch; entry[1] = batch; entry[2] = picker; entry[3] = dropstation
         item = dict()
         item["name"] = entry[2].name
-        item["batch"] = entry[1].id
+        item["batch"] = "{:05d}".format(entry[1].id)
         item["date"] = entry[0].date
         hour, minute = gen_utils.float_to_time(entry[3].time if entry[3] else entry[1].time)
         item["time"] = str(hour) + ":" + str(minute)
@@ -186,12 +177,11 @@ def see_the_batches():
 
 @app.route("/cartons")
 def display_the_cartons():
-
     batch = request.args.get("batch", None)
     if not batch:
         return render_template("batch_viewer.html")
     session = modals.db.get_session()
-    entries = session.query(modals.Dematic).filter(modals.Dematic.work_id == batch)\
+    entries = session.query(modals.Dematic).filter(modals.Dematic.work_id == batch) \
         .order_by(modals.Dematic.route.desc(), modals.Dematic.sales_id.desc())
 
     items = []
@@ -206,9 +196,9 @@ def display_the_cartons():
     session.close()
     return render_template("cartons.html", items=items, routes=routes)
 
+
 @app.route("/drop_station", methods=["POST"])
 def add_to_drop_station():
-
     Session = modals.db.get_session()
 
     dropstation = dict()
@@ -230,17 +220,17 @@ def add_to_drop_station():
     if not b:
         return "Error with the master batch"
 
-    entry_exists = bool(Session.query(modals.DropStation)\
-                               .filter(modals.DropStation.masterid == dropstation["masterid"]).first())
+    entry_exists = bool(Session.query(modals.DropStation) \
+                        .filter(modals.DropStation.masterid == dropstation["masterid"]).first())
     if entry_exists:
         dropstation["station"] += " OR "
         item = Session.query(modals.DropStation) \
             .filter(modals.DropStation.masterid == dropstation["masterid"]).first()
         s = dropstation["station"] + item.station
         Session.query(modals.DropStation) \
-                    .filter(modals.DropStation.masterid == dropstation["masterid"]).update({
-                                                                                        "station": s,
-                                                                                        "time": dropstation["time"]})
+            .filter(modals.DropStation.masterid == dropstation["masterid"]).update({
+            "station": s,
+            "time": dropstation["time"]})
 
     else:
         db_entry = modals.DropStation(pickerid=dropstation["pickerid"], date=dropstation["date"],
@@ -257,6 +247,7 @@ def add_to_drop_station():
 def drop_test():
     return render_template("drop_station.html")
 
+
 @app.route('/')
 @app.route('/<variable>')
 def get_index(variable=None):
@@ -265,13 +256,11 @@ def get_index(variable=None):
 
 @app.route("/display_barcodes")
 def display_barcodes():
-
     return render_template("barcode_viewer.html")
 
 
 @app.route("/display_barcodes", methods=["POST"])
 def gen_barcodes():
-
     n = request.form["n"]
     if n == "":
         return render_template("barcode_viewer.html")
@@ -324,7 +313,6 @@ def get_batches_in_dropstation():
 
 @app.route("/search_by", methods=["GET"])
 def search_by():
-
     search_type = request.args.get("items")
     data = request.args.get("data", None)
     data = data.upper()

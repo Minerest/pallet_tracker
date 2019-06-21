@@ -11,7 +11,7 @@
 <div id="master_block">
     {% block top %}
     <div id="container" class="base">
-        <img src="/static/ess.png">
+        <div id="logo"><img src="/static/ess.png"></div>
 
         <H2>RELEVANT LINKS:</H2>
         <a href="/batch-viewer">BATCH VIEWER</a> |
@@ -24,6 +24,29 @@
         {% block content %}
         {% endblock %}
     </div>
+    <script>
+        var ck = document.cookie;
+        var decoded = decodeURIComponent(ck);
+        var ca = decoded.split(';');
+        var val = "";
+        var name = "first_load";
+        for (var i = 0; i < ca.length; i++){
+            var c = ca[i];
+            while(c.charAt(0) == " ") {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0){
+                val = c.substring(name.length, c.length);
+            }
+        }
+        if (val == "" || val == "True"){
+            document.getElementById("logo").className = "logo-animate";
+            document.cookie = "first_load = False";
+        }
+        else{
+            document.getElementById("logo").className = "";
+        }
+    </script>
 </div>
 </body>
 </html>

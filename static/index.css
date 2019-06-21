@@ -163,3 +163,20 @@ td {
     width: 100%;
   }
 }
+
+.logo-animate {
+    animation-duration: 3.5s;
+    animation-name: fadein;
+
+}
+
+@keyframes fadein {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+
+}
