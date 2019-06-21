@@ -25,13 +25,11 @@
         }
         else if (text_val[text_val.length - 1] == "$" && text_val[0] == "$"){
             name_input.value = text_val;
-
-            document.getElementById("name-view").innerHTML = "<H2>" + text_val + "</H2>";
-
+            typeWriter("Picker: " + text_val, name_view, 0);
         }
         else if (text_val.length >= 10 && !isNaN(text_val[text_val.length - 1])){
             batch_input.value = text_val;
-            batch_view.innerHTML = "<H2>" + text_val + "</H2>";
+            typeWriter("Master Batch: " + text_val, batch_view, 0);
         }
 
     document.getElementById("textfield").value = "";
@@ -70,6 +68,17 @@
         document.getElementById("form-name").value = "";
         document.getElementById("form-batch").value = "";
 
+    }
+
+      function typeWriter(txt, id, i) {
+        console.log(txt);
+        if( i < txt.length){
+            id.innerHTML += txt.charAt(i);
+            setTimeout(function(){
+                typeWriter(txt, id, i + 1);
+
+            }, 20);
+        }
     }
 
     setInterval(function() { focus_the_box(); }, 125);

@@ -133,15 +133,23 @@ td {
 #master-view {
     height: 50 px;
     width: 150 px;
+    animation:
+        type-writer 3.5s steps(40, end);
 }
 
 #batch-view {
 
     height: 50 px;
     width: 150 px;
-
+    animation:
+        type-writer 3.5s steps(40, end);
 }
 
 .color_me > td {
     background-color: #5eb8d6;
+}
+
+@keyframes type-writer {
+    from { width: 0}
+    to { width: 100%}
 }
