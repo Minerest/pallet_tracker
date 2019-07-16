@@ -146,7 +146,7 @@ td {
     background-color: #5eb8d6;
 }
 
-#batch_table {
+table {
   animation-duration: .7s;
   animation-name: slidein;
   margin-top: 20px;
