@@ -43,7 +43,7 @@ def gen(n=None):
         last_entry.id = 99999999
         session.add(last_entry)
         session.commit()
-    batches_to_print = [ "$" + str(batch_id) for batch_id in range(last_entry.id + 1, last_entry.id + amt + 1)]
+    batches_to_print = ["$" + str(batch_id) for batch_id in range(last_entry.id + 1, last_entry.id + amt + 1)]
     session.close()
 
     barcode_object = b.get_barcode_class("code128")
