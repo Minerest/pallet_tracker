@@ -157,7 +157,7 @@ def see_the_batches():
         item["batch"] = "{:05d}".format(entry[1].id)
         item["date"] = entry[0].date
         hour, minute = gen_utils.float_to_time(entry[3].time if entry[3] else entry[1].time)
-        item["time"] = str(hour) + ":" + str(minute)
+        item["time"] = "{:02d}".format(hour) + ":" + "{:02d}".format(minute)
         item["drop"] = entry[3].station if entry[3] else "Currently Picking"
         if entry[3] and entry[3].masterid == entry[0].id:
             item["drop"] = entry[3].station
@@ -223,10 +223,11 @@ def add_to_drop_station():
     entry_exists = bool(Session.query(modals.DropStation) \
                         .filter(modals.DropStation.masterid == dropstation["masterid"]).first())
     if entry_exists:
-        dropstation["station"] += " OR "
         item = Session.query(modals.DropStation) \
             .filter(modals.DropStation.masterid == dropstation["masterid"]).first()
-        s = dropstation["station"] + item.station
+        dropstation["station"] += " OR " if item.station not in dropstation["station"] else ""
+
+        s = dropstation["station"] + item.station if item.station not in dropstation["station"] else dropstation["station"]
         Session.query(modals.DropStation) \
             .filter(modals.DropStation.masterid == dropstation["masterid"]).update({
             "station": s,
