@@ -1,14 +1,19 @@
 from sqlalchemy import Column, String, Integer, Date, ForeignKey, Float
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import MetaData, create_engine
+from sqlalchemy import MetaData, create_engine, exists
 from sqlalchemy.orm import sessionmaker
+
+# For first time setup, run this file!
+# this will create a null user that will get referenced before a picker picks up the
+# master label and after the master label gets created
+
 
 metadata = MetaData()
 Base = declarative_base()
 
 SQLITE = 'sqlite'
 Base = declarative_base()
-engine = create_engine('sqlite:////sqlite3/batches.db', echo=False)
+engine = create_engine('sqlite:////Users\diazric\Downloads\sqlite-tools-win32-x86-3290000\sqlite-tools-win32-x86-3290000/batches.db', echo=False)
 metadata = MetaData()
 
 
@@ -83,3 +88,10 @@ db = SqlLitedb()
 
 if __name__ == "__main__":
     Base.metadata.create_all(engine)
+    session = db.get_session()
+    null_user = Picker(id=0, name="Currently Picking")
+    null_user_exists = session.query(exists().where(Picker.id==0)).scalar()
+    if not null_user_exists:
+        session.add(null_user)
+        session.commit()
+    session.close()
